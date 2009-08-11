@@ -1,0 +1,12 @@
+* text=auto !eol
+base/revisions.php -text
+base/revisions_upgrade.php -text
+exec/articles_versions.php -text
+exec/suivi_revisions.php -text
+inc/diff.php -text
+inc/revisions.php -text
+inc/revisions_autoriser.php -text
+inc/revisions_pipeline.php -text
+inc/suivi_versions.php -text
+/plugin.xml -text
+prive/rss/revisions.html -text
