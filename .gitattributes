@@ -17,6 +17,6 @@ lang/revisions_fr.php -text
 prive/configurer/revisions.html -text
 prive/rss/revisions.html -text
 prive/rss/revisions_fonctions.php -text
-prive/skins/spip/images/revision-16.png -text
-prive/skins/spip/images/revision-24.png -text
+prive/themes/spip/images/revision-16.png -text
+prive/themes/spip/images/revision-24.png -text
 /revisions_options.php -text
