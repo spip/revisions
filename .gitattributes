@@ -16,7 +16,7 @@ lang/revisions_fr.php -text
 /plugin.xml -text
 prive/rss/revisions.html -text
 prive/rss/revisions_fonctions.php -text
-prive/squelettes/contenu/page-configurer_revisions.html -text
+prive/squelettes/contenu/configurer_revisions.html -text
 prive/themes/spip/images/revision-16.png -text
 prive/themes/spip/images/revision-24.png -text
 /revisions_options.php -text
