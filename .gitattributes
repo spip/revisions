@@ -1,4 +1,6 @@
 * text=auto !eol
+afficher_diff/champ.php -text
+afficher_diff/id_rubrique.php -text
 base/revisions.php -text
 base/revisions_upgrade.php -text
 exec/objets_versions.php -text
