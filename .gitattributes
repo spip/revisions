@@ -13,9 +13,12 @@ inc/revisions_pipeline.php -text
 inc/suivi_versions.php -text
 lang/revisions_fr.php -text
 /plugin.xml -text
+prive/objets/liste/versions.html -text
+prive/objets/liste/versions_fonctions.php -text
 prive/rss/revisions.html -text
 prive/rss/revisions_fonctions.php -text
 prive/squelettes/contenu/configurer_revisions.html -text
+prive/squelettes/contenu/revisions.html -text
 prive/style_prive_plugin_revisions.html -text
 prive/themes/spip/images/diff-16.png -text
 prive/themes/spip/images/diff-24.png -text
