@@ -3,10 +3,11 @@ afficher_diff/champ.php -text
 afficher_diff/id_rubrique.php -text
 base/revisions.php -text
 base/revisions_upgrade.php -text
-exec/objets_versions.php -text
 exec/revisions_restaurer.php -text
 formulaires/configurer_revisions_objets.html -text
 formulaires/configurer_revisions_objets.php -text
+formulaires/reviser.html -text
+formulaires/reviser.php -text
 inc/diff.php -text
 inc/revisions.php -text
 inc/revisions_autoriser.php -text
