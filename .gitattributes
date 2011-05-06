@@ -13,6 +13,7 @@ inc/revisions.php -text
 inc/revisions_autoriser.php -text
 inc/revisions_pipeline.php -text
 inc/suivi_versions.php -text
+lang/revisions.xml -text
 lang/revisions_ar.php -text
 lang/revisions_ast.php -text
 lang/revisions_ay.php -text
