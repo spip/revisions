@@ -13,6 +13,7 @@ inc/revisions_autoriser.php -text
 inc/revisions_pipeline.php -text
 inc/suivi_versions.php -text
 lang/paquet-revisions.xml -text
+lang/paquet-revisions_ar.php -text
 lang/paquet-revisions_en.php -text
 lang/paquet-revisions_sk.php -text
 lang/revisions.xml -text
