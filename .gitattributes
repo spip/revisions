@@ -14,6 +14,7 @@ inc/revisions_pipeline.php -text
 inc/suivi_versions.php -text
 lang/paquet-revisions.xml -text
 lang/paquet-revisions_ar.php -text
+lang/paquet-revisions_de.php -text
 lang/paquet-revisions_en.php -text
 lang/paquet-revisions_es.php -text
 lang/paquet-revisions_fa.php -text
