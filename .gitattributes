@@ -19,9 +19,11 @@ lang/paquet-revisions_de.php -text
 lang/paquet-revisions_en.php -text
 lang/paquet-revisions_es.php -text
 lang/paquet-revisions_fa.php -text
+lang/paquet-revisions_fr_fem.php -text
 lang/paquet-revisions_it.php -text
 lang/paquet-revisions_lb.php -text
 lang/paquet-revisions_nl.php -text
+lang/paquet-revisions_pt.php -text
 lang/paquet-revisions_pt_br.php -text
 lang/paquet-revisions_ru.php -text
 lang/paquet-revisions_sk.php -text
@@ -46,6 +48,7 @@ lang/revisions_eu.php -text
 lang/revisions_fa.php -text
 lang/revisions_fon.php -text
 lang/revisions_fr.php -text
+lang/revisions_fr_fem.php -text
 lang/revisions_fr_tu.php -text
 lang/revisions_gl.php -text
 lang/revisions_he.php -text
