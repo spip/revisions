@@ -7,6 +7,7 @@ formulaires/configurer_revisions_objets.html -text
 formulaires/configurer_revisions_objets.php -text
 formulaires/reviser.html -text
 formulaires/reviser.php -text
+genie/optimiser_revisions.php -text
 inc/diff.php -text
 inc/revisions.php -text
 inc/revisions_autoriser.php -text
