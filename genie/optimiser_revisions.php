@@ -33,6 +33,7 @@ function genie_optimiser_revisions_dist($last) {
 
 	optimiser_base_revisions();
 	optimiser_tables_revision();
+	anonymiser_base_revisions();
 
 	return 1;
 }
@@ -92,6 +93,24 @@ function optimiser_tables_revision() {
 			spip_log("fin d'optimisation de la table $table");
 		} else {
 			spip_log("Pas d'optimiseur necessaire pour $table");
+		}
+	}
+}
+
+
+/**
+ * Dans l'historique des révisions, hash à intervalle régulier les ip
+**/
+function anonymiser_base_revisions() {
+	if (defined('_CNIL_PERIODE') and _CNIL_PERIODE) {
+		$critere_cnil = 'date<"'.date('Y-m-d', time()-_CNIL_PERIODE).'"'
+			. ' AND (id_auteur LIKE "%.%" OR id_auteur LIKE "%:%")'; # ipv4 ou ipv6
+
+		$c = sql_countsel('spip_versions', $critere_cnil);
+		if ($c>0) {
+			spip_log("CNIL: masquer IP de $c versions anciennes", 'revisions');
+			sql_update('spip_versions', array('id_auteur' => 'MD5(id_auteur)'), $critere_cnil);
+			return $c;
 		}
 	}
 }
