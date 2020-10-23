@@ -301,6 +301,7 @@ function revisions_post_edition_lien($x) {
 		$table = table_objet_sql($x['args']['objet']);
 		$id_objet = $x['args']['id_objet'];
 		include_spip('inc/revisions');
+		include_spip('inc/session');
 		// si c'est une creation de lien qui arrive aussitot apres l'insertion on ne cree pas de revision
 		// (au cas ou pre_edition_lien n'aurait pas ete appele ?)
 		if (isset($GLOBALS['premiere_revision']["$table:0"])) {
@@ -316,7 +317,7 @@ function revisions_post_edition_lien($x) {
 			$champs = array(
 				$j => recuperer_valeur_champ_jointure($x['args']['objet'], $id_objet, $x['args']['objet_source'])
 			);
-			ajouter_version($id_objet, $x['args']['objet'], $champs, '', $GLOBALS['visiteur_session']['id_auteur']);
+			ajouter_version($id_objet, $x['args']['objet'], $champs, '', session_get('id_auteur'));
 		}
 
 		$table = table_objet_sql($x['args']['objet_source']);
@@ -336,7 +337,7 @@ function revisions_post_edition_lien($x) {
 			$champs = array(
 				$j => recuperer_valeur_champ_jointure($x['args']['objet_source'], $id_objet, $x['args']['objet'])
 			);
-			ajouter_version($id_objet, $x['args']['objet_source'], $champs, '', $GLOBALS['visiteur_session']['id_auteur']);
+			ajouter_version($id_objet, $x['args']['objet_source'], $champs, '', session_get('id_auteur'));
 		}
 	}
 
