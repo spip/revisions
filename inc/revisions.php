@@ -433,11 +433,11 @@ function apparier_paras($src, $dest, $flou = true) {
  * @uses recuperer_version()
  * @uses liste_champs_versionnes()
  * @uses retrouver_champ_version_objet()
- * 
+ *
  * @param int $id_objet Identifiant de l'objet
  * @param string $objet Objet
  * @param int $id_version Identifiant de la version
- * @return array           Couples champs => textes 
+ * @return array           Couples champs => textes
 **/
 function recuperer_version_complete($id_objet, $objet, $id_version) {
 	if (!$id_version or !$id_objet or !$objet) {
@@ -475,7 +475,7 @@ function recuperer_version($id_objet, $objet, $id_version) {
 	if (!$champs or !is_array($champs = unserialize($champs))) {
 		return array();
 	} else {
-		return reconstuire_version($champs, 
+		return reconstuire_version($champs,
 			recuperer_fragments($id_objet, $objet, $id_version));
 	}
 }
@@ -748,19 +748,17 @@ function propre_diff($texte) {
 	}
 
 	// replacer les valeurs des <span> et <div> diff-
-	if (is_array($regs)) {
+	if ($regs && is_array($regs)) {
 		foreach ($regs as $c => $reg) {
 			$bal = (!$reg[1]) ? $reg[0] : "</$reg[2]>";
 			$texte = str_replace('@@@SPIP_DIFF' . $c . '@@@', $bal, $texte);
 			$GLOBALS['les_notes'] = str_replace('@@@SPIP_DIFF' . $c . '@@@', $bal, $GLOBALS['les_notes']);
 		}
-	}
-
-
-	// quand le dernier tag est ouvrant le refermer ...
-	$reg = end($regs);
-	if (!$reg[1] and $reg[2]) {
-		$texte .= "</$reg[2]>";
+		// quand le dernier tag est ouvrant le refermer ...
+		$reg = end($regs);
+		if (!$reg[1] and $reg[2]) {
+			$texte .= "</$reg[2]>";
+		}
 	}
 
 	// et interdire_scripts !
