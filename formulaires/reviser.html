@@ -1,8 +1,8 @@
 <div class='formulaire_spip formulaire_#FORM' id='formulaire_reviser_#ENV{_objet}_#ENV{_id_objet}'>
 <h3 class='titrem'>[(#CHEMIN_IMAGE{revision-24.png}|balise_img{'',cadre-icone})]<:revisions:titre_revisions:></h3>
 
-[<p class="reponse_formulaire reponse_formulaire_ok none">(#ENV**{message_ok})</p>]
-[<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV**{message_erreur})</p>]
+[<p class="reponse_formulaire reponse_formulaire_ok none" role="status">(#ENV**{message_ok})</p>]
+[<p class="reponse_formulaire reponse_formulaire_erreur" role="alert">(#ENV**{message_erreur})</p>]
 
 	<form action="#ENV{action}#formulaire_configurer_contenu_forums" method="post"><div>
 		#ACTION_FORMULAIRE
