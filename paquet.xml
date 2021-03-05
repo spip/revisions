@@ -26,7 +26,6 @@
 	<pipeline nom="affiche_milieu"              inclure="revisions_pipeline.php" />
 	<pipeline nom="configurer_liste_metas"      inclure="revisions_pipeline.php" />
 	<pipeline nom="formulaire_charger"          inclure="revisions_pipeline.php" />
-	<pipeline nom="taches_generales_cron" 		inclure="revisions_pipeline.php" />
 	<pipeline nom="declarer_tables_interfaces"  inclure="base/revisions.php" />
 	<pipeline nom="declarer_tables_auxiliaires" inclure="base/revisions.php" />
 	<pipeline nom="declarer_tables_objets_sql"  inclure="base/revisions.php" />
@@ -35,4 +34,6 @@
 
 	<menu nom="revisions" titre="revisions:info_historique_titre" parent="menu_publication" icone="images/revision-16.png" />
 	<menu nom="configurer_revisions" titre="revisions:titre_revisions" parent="menu_configuration" icone="images/revision-16.png" />
+
+	<genie nom="optimiser_revisions" periode="86400" />
 </paquet>
