@@ -1,4 +1,4 @@
-<BOUCLE_champs(POUR){tableau #ENV*{textes}}>
+<BOUCLE_champs(DATA){source table, #ENV*{textes}}>
 	<div class="champ[(#CLE|match{^jointure_}|oui)jointure] contenu_#CLE[ (#VALEUR*|strlen|?{'',vide})]">
 		<div class='label'>[(#CLE|label_champ{#ENV{objet}})]</div>
 		<div dir='#LANG_DIR' class='#CLE'>[(#VALEUR*|propre_diff)]</div>
