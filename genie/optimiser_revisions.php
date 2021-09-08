@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************************\
  *  SPIP, Système de publication pour l'internet                           *
  *                                                                         *
@@ -11,9 +12,9 @@
 
 /**
  * @plugin Revisions pour SPIP
- * 
+ *
  * @deprecated 4.0 Utiliser genie/revisions_optimiser_revisions.php
- * 
+ *
  * @license GPL
  * @package SPIP\Revisions\Genie
  */
@@ -29,7 +30,7 @@ include_spip('genie/revisions_optimiser_revisions');
  *
  * @deprecated 4.0
  * @uses genie_revisions_optimiser_revisions_dist()
- * 
+ *
  * @param int $last
  *     Timestamp de la dernière exécution de cette tâche
  * @return int

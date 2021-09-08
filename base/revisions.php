@@ -65,7 +65,7 @@ function revisions_declarer_tables_objets_sql($tables) {
  */
 function revisions_declarer_tables_auxiliaires($tables_auxiliaires) {
 
-	$spip_versions = array(
+	$spip_versions = [
 		'id_version' => 'bigint(21) DEFAULT 0 NOT NULL',
 		'id_objet' => 'bigint(21) DEFAULT 0 NOT NULL',
 		'objet' => "VARCHAR (25) DEFAULT '' NOT NULL",
@@ -74,22 +74,22 @@ function revisions_declarer_tables_auxiliaires($tables_auxiliaires) {
 		'titre_version' => "text DEFAULT '' NOT NULL",
 		'permanent' => "char(3) DEFAULT '' NOT NULL",
 		'champs' => "text DEFAULT '' NOT NULL"
-	);
+	];
 
-	$spip_versions_key = array(
+	$spip_versions_key = [
 		'PRIMARY KEY' => 'id_version, id_objet, objet',
 		'KEY id_version' => 'id_version',
 		'KEY id_objet' => 'id_objet',
 		'KEY objet' => 'objet'
-	);
-	$spip_versions_join = array(
+	];
+	$spip_versions_join = [
 		'id_version' => 'id_version',
 		'id_objet' => 'id_objet',
 		'objet' => 'objet',
 		'id_auteur' => 'id_auteur',
-	);
+	];
 
-	$spip_versions_fragments = array(
+	$spip_versions_fragments = [
 		'id_fragment' => "int unsigned DEFAULT '0' NOT NULL",
 		'version_min' => "int unsigned DEFAULT '0' NOT NULL",
 		'version_max' => "int unsigned DEFAULT '0' NOT NULL",
@@ -97,23 +97,23 @@ function revisions_declarer_tables_auxiliaires($tables_auxiliaires) {
 		'objet' => "VARCHAR (25) DEFAULT '' NOT NULL",
 		'compress' => 'tinyint NOT NULL',
 		'fragment' => 'longblob'  # ici c'est VRAIMENT un blob (on y stocke du gzip)
-	);
+	];
 
-	$spip_versions_fragments_key = array(
+	$spip_versions_fragments_key = [
 		'PRIMARY KEY' => 'id_objet, objet, id_fragment, version_min'
-	);
+	];
 
 
-	$tables_auxiliaires['spip_versions'] = array(
+	$tables_auxiliaires['spip_versions'] = [
 		'field' => &$spip_versions,
 		'key' => &$spip_versions_key,
 		'join' => &$spip_versions_join
-	);
+	];
 
-	$tables_auxiliaires['spip_versions_fragments'] = array(
+	$tables_auxiliaires['spip_versions_fragments'] = [
 		'field' => &$spip_versions_fragments,
 		'key' => &$spip_versions_fragments_key
-	);
+	];
 
 	return $tables_auxiliaires;
 }

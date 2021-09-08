@@ -16,11 +16,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 
 function formulaires_configurer_revisions_objets_charger_dist() {
 	if (!$objets = unserialize($GLOBALS['meta']['objets_versions'])) {
-		$objets = array();
+		$objets = [];
 	}
-	$valeurs = array(
+	$valeurs = [
 		'objets_versions' => $objets,
-	);
+	];
 
 	return $valeurs;
 }
@@ -31,11 +31,12 @@ function formulaires_configurer_revisions_objets_traiter_dist() {
 	$tables = serialize(_request('objets_versions'));
 	ecrire_meta('objets_versions', $tables);
 
-	return array('message_ok' => _T('config_info_enregistree'));
+	return ['message_ok' => _T('config_info_enregistree')];
 }
 
 function test_objet_versionable($desc) {
-	if (!$desc['editable']
+	if (
+		!$desc['editable']
 		or !isset($desc['champs_versionnes'])
 		or !count($desc['champs_versionnes'])
 	) {

@@ -44,8 +44,8 @@ function label_champ($champ, $objet = false) {
 		default:
 			$label = pipeline(
 				'revisions_chercher_label',
-				array('args' => array('champ' => $champ, 'objet' => $objet),
-				'data' => 'info_' . $champ)
+				['args' => ['champ' => $champ, 'objet' => $objet],
+				'data' => 'info_' . $champ]
 			);
 			break;
 	}

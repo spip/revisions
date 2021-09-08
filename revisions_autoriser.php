@@ -40,5 +40,5 @@ function revisions_autoriser() {
  * @return bool          true s'il a le droit, false sinon
  **/
 function autoriser_configurerrevisions_menu_dist($faire, $type, $id, $qui, $opt) {
-    return autoriser('configurer', '_revisions', $id, $qui, $opt);
+	return autoriser('configurer', '_revisions', $id, $qui, $opt);
 }

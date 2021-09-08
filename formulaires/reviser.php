@@ -34,11 +34,11 @@ function check_version_diff($objet, $id_objet, $id_version, $id_diff, $last_vers
 
 	// si pas de diff possible, on renvoi 0,0
 	if (!$last_version) {
-		return array(0, 0);
+		return [0, 0];
 	}
 
 	if ($last_version == 1) {
-		return array(1, 0);
+		return [1, 0];
 	}
 
 	$id_version = max($id_version, 2);
@@ -66,12 +66,12 @@ function check_version_diff($objet, $id_objet, $id_version, $id_diff, $last_vers
 		$id_diff = $id_version - 1;
 	}
 
-	return array($id_version, $id_diff);
+	return [$id_version, $id_diff];
 }
 
 function formulaires_reviser_charger_dist($objet, $id_objet, $id_version, $id_diff) {
 	if (!$objets = unserialize($GLOBALS['meta']['objets_versions'])) {
-		$objets = array();
+		$objets = [];
 	}
 
 	if (!in_array(table_objet_sql($objet), $objets)) {
@@ -84,19 +84,19 @@ function formulaires_reviser_charger_dist($objet, $id_objet, $id_version, $id_di
 		return false;
 	}
 
-	$valeurs = array(
+	$valeurs = [
 		'_last_version' => $last_version,
 		'_objet' => $objet,
 		'_id_objet' => $id_objet,
 		'id_version' => $id_version,
 		'id_diff' => $id_diff,
-	);
+	];
 
 	return $valeurs;
 }
 
 function formulaires_reviser_verifier_dist($objet, $id_objet, $id_version, $id_diff) {
-	$erreurs = array();
+	$erreurs = [];
 	list($id_version, $id_diff) = check_version_diff($objet, $id_objet, _request('id_version'), _request('id_diff'));
 	set_request('id_version', $id_version);
 	set_request('id_diff', $id_diff);
@@ -105,7 +105,7 @@ function formulaires_reviser_verifier_dist($objet, $id_objet, $id_version, $id_d
 }
 
 function formulaires_reviser_traiter_dist($objet, $id_objet, $id_version, $id_diff) {
-	$res = array('message_ok' => '', 'editable' => true);
+	$res = ['message_ok' => '', 'editable' => true];
 
 	$id_version = _request('id_version');
 	$id_diff = _request('id_diff');

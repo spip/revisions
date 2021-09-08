@@ -10,7 +10,6 @@
  *  Pour plus de détails voir le fichier COPYING.txt ou l'aide en ligne.   *
 \***************************************************************************/
 
-
 /**
  * Autorisations du plugin révisions
  *
@@ -26,7 +25,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
  *
  * @pipeline autoriser
  */
-function revisions_autoriser() { }
+function revisions_autoriser() {
+}
 
 /**
  * Autorisation de voir les revisions ?
@@ -52,7 +52,7 @@ function autoriser_voirrevisions_dist($faire, $type, $id, $qui, $opt) {
 		return false;
 	}
 
-	if (!$row = sql_fetsel("*", $table, "$id_table_objet=" . intval($id))) {
+	if (!$row = sql_fetsel('*', $table, "$id_table_objet=" . intval($id))) {
 		return false;
 	}
 

@@ -16,7 +16,7 @@
  * @package SPIP\Revisions\Diff
  **/
 
-if (!defined("_ECRIRE_INC_VERSION")) {
+if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
@@ -37,10 +37,10 @@ if (!defined("_ECRIRE_INC_VERSION")) {
 function lcs_opt($s) {
 	$n = count($s);
 	if (!$n) {
-		return array();
+		return [];
 	}
-	$paths = array();
-	$paths_ymin = array();
+	$paths = [];
+	$paths_ymin = [];
 	$max_len = 0;
 
 	// Insertion des points
@@ -60,7 +60,7 @@ function lcs_opt($s) {
 		}
 		if ($len == 0) {
 			$paths_ymin[1] = $y;
-			$paths[1] = array($y => $c);
+			$paths[1] = [$y => $c];
 		}
 		if ($len + 1 > $max_len) {
 			$max_len = $len + 1;
@@ -84,12 +84,12 @@ function lcs($s, $t) {
 	$n = count($s);
 	$p = count($t);
 	if (!$n || !$p) {
-		return array(0 => array(), 1 => array());
+		return [0 => [], 1 => []];
 	}
-	$paths = array();
-	$paths_ymin = array();
+	$paths = [];
+	$paths_ymin = [];
 	$max_len = 0;
-	$s_pos = $t_pos = array();
+	$s_pos = $t_pos = [];
 
 	// Insertion des points
 	foreach ($t as $y => $c) {
@@ -122,18 +122,18 @@ function lcs($s, $t) {
 		}
 	}
 	if (isset($paths[$max_len]) and $paths[$max_len]) {
-		$path = explode(" ", $paths[$max_len]);
-		$u = $v = array();
+		$path = explode(' ', $paths[$max_len]);
+		$u = $v = [];
 		foreach ($path as $p) {
-			list($x, $y) = explode(",", $p);
+			list($x, $y) = explode(',', $p);
 			$u[$x] = $y;
 			$v[$y] = $x;
 		}
 
-		return array($u, $v);
+		return [$u, $v];
 	}
 
-	return array(0 => array(), 1 => array());
+	return [0 => [], 1 => []];
 }
 
 /**
@@ -261,12 +261,12 @@ class DiffTexte {
 	 * Constructeur
 	 **/
 	public function __construct() {
-		$this->r = "";
+		$this->r = '';
 	}
 
 // https://code.spip.net/@_diff
 	public function _diff($p, $p_old) {
-		$diff = new Diff(new DiffPara);
+		$diff = new Diff(new DiffPara());
 
 		return $diff->comparer($p, $p_old);
 	}
@@ -290,20 +290,20 @@ class DiffTexte {
 // https://code.spip.net/@ajouter
 	public function ajouter($p) {
 		$p = trim($p);
-		$this->r .= "\n\n\n<span class=\"diff-para-ajoute\" title=\"" . _T('revisions:diff_para_ajoute') . "\">" . $p . "</span rem=\"diff-\">";
+		$this->r .= "\n\n\n<span class=\"diff-para-ajoute\" title=\"" . _T('revisions:diff_para_ajoute') . '">' . $p . '</span rem="diff-">';
 	}
 
 // https://code.spip.net/@supprimer
 	public function supprimer($p_old) {
 		$p_old = trim($p_old);
-		$this->r .= "\n\n\n<span class=\"diff-para-supprime\" title=\"" . _T('revisions:diff_para_supprime') . "\">" . $p_old . "</span rem=\"diff-\">";
+		$this->r .= "\n\n\n<span class=\"diff-para-supprime\" title=\"" . _T('revisions:diff_para_supprime') . '">' . $p_old . '</span rem="diff-">';
 	}
 
 // https://code.spip.net/@deplacer
 	public function deplacer($p, $p_old) {
-		$this->r .= "\n\n\n<span class=\"diff-para-deplace\" title=\"" . _T('revisions:diff_para_deplace') . "\">";
+		$this->r .= "\n\n\n<span class=\"diff-para-deplace\" title=\"" . _T('revisions:diff_para_deplace') . '">';
 		$this->r .= trim($this->_diff($p, $p_old));
-		$this->r .= "</span rem=\"diff-\">";
+		$this->r .= '</span rem="diff-">';
 	}
 
 // https://code.spip.net/@comparer
@@ -327,12 +327,12 @@ class DiffPara {
 
 	/** Constructeur */
 	public function __construct() {
-		$this->r = "";
+		$this->r = '';
 	}
 
 // https://code.spip.net/@_diff
 	public function _diff($p, $p_old) {
-		$diff = new Diff(new DiffPhrase);
+		$diff = new Diff(new DiffPhrase());
 
 		return $diff->comparer($p, $p_old);
 	}
@@ -344,7 +344,7 @@ class DiffPara {
 
 // https://code.spip.net/@segmenter
 	public function segmenter($texte) {
-		$paras = array();
+		$paras = [];
 		$texte = trim($texte);
 		while (preg_match('/[\.!\?\]]+\s*/u', $texte, $regs)) {
 			$p = strpos($texte, $regs[0]) + strlen($regs[0]);
@@ -360,18 +360,20 @@ class DiffPara {
 
 // https://code.spip.net/@ajouter
 	public function ajouter($p) {
-		$this->r .= "<span class=\"diff-ajoute\" title=\"" . _T('revisions:diff_texte_ajoute') . "\">" . $p . "</span rem=\"diff-\">";
+		$this->r .= '<span class="diff-ajoute" title="' . _T('revisions:diff_texte_ajoute') . '">' . $p . '</span rem="diff-">';
 	}
 
 // https://code.spip.net/@supprimer
 	public function supprimer($p_old) {
-		$this->r .= "<span class=\"diff-supprime\" title=\"" . _T('revisions:diff_texte_supprime') . "\">" . $p_old . "</span rem=\"diff-\">";
+		$this->r .= '<span class="diff-supprime" title="' . _T('revisions:diff_texte_supprime') . '">' . $p_old . '</span rem="diff-">';
 	}
 
 // https://code.spip.net/@deplacer
 	public function deplacer($p, $p_old) {
-		$this->r .= "<span class=\"diff-deplace\" title=\"" . _T('revisions:diff_texte_deplace') . "\">" . $this->_diff($p,
-				$p_old) . "</span rem=\"diff-\">";
+		$this->r .= '<span class="diff-deplace" title="' . _T('revisions:diff_texte_deplace') . '">' . $this->_diff(
+			$p,
+			$p_old
+		) . '</span rem="diff-">';
 	}
 
 // https://code.spip.net/@comparer
@@ -395,7 +397,7 @@ class DiffPhrase {
 
 	/** Constructeur */
 	public function __construct() {
-		$this->r = "";
+		$this->r = '';
 	}
 
 // https://code.spip.net/@fuzzy
@@ -405,7 +407,7 @@ class DiffPhrase {
 
 // https://code.spip.net/@segmenter
 	public function segmenter($texte) {
-		$paras = array();
+		$paras = [];
 		if (test_pcre_unicode()) {
 			$punct = '([[:punct:]]|' . plage_punct_unicode() . ')';
 			$mode = 'u';
@@ -419,7 +421,7 @@ class DiffPhrase {
 			$p = strpos($texte, $regs[0]);
 			$l = strlen($regs[0]);
 			$punct = $regs[1] ? $regs[1] : $regs[6];
-			$milieu = "";
+			$milieu = '';
 			if ($punct) {
 				// notes
 				if ($punct == '[[') {
@@ -468,12 +470,12 @@ class DiffPhrase {
 
 // https://code.spip.net/@ajouter
 	public function ajouter($p) {
-		$this->r .= "<span class=\"diff-ajoute\" title=\"" . _T('revisions:diff_texte_ajoute') . "\">" . $p . "</span rem=\"diff-\"> ";
+		$this->r .= '<span class="diff-ajoute" title="' . _T('revisions:diff_texte_ajoute') . '">' . $p . '</span rem="diff-"> ';
 	}
 
 // https://code.spip.net/@supprimer
 	public function supprimer($p_old) {
-		$this->r .= "<span class=\"diff-supprime\" title=\"" . _T('revisions:diff_texte_supprime') . "\">" . $p_old . "</span rem=\"diff-\"> ";
+		$this->r .= '<span class="diff-supprime" title="' . _T('revisions:diff_texte_supprime') . '">' . $p_old . '</span rem="diff-"> ';
 	}
 
 // https://code.spip.net/@comparer

@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************************\
  *  SPIP, Système de publication pour l'internet                           *
  *                                                                         *
@@ -52,7 +53,7 @@ function optimiser_base_revisions() {
 	 * On supprimera ensuite les occurences dans spip_versions et spip_versions_fragments
 	 */
 	while ($objet = sql_fetch($objets_revises)) {
-		$in = array();
+		$in = [];
 		$table = table_objet_sql($objet['objet']);
 		$id_table_objet = id_table_objet($objet['objet']);
 		$res = sql_select(
@@ -76,7 +77,7 @@ function optimiser_base_revisions() {
 		 * -* spip_versions_fragments
 		 */
 		if ($in) {
-			foreach (array('spip_versions', 'spip_versions_fragments') as $table) {
+			foreach (['spip_versions', 'spip_versions_fragments'] as $table) {
 				sql_delete($table, sql_in('id_objet', array_keys($in)) . ' AND objet=' . sql_quote($objet['objet']));
 			}
 		}
@@ -87,7 +88,7 @@ function optimiser_base_revisions() {
  * Optimisation des tables spip_versions et spip_versions_fragments
  */
 function optimiser_tables_revision() {
-	foreach (array('spip_versions', 'spip_versions_fragments') as $table) {
+	foreach (['spip_versions', 'spip_versions_fragments'] as $table) {
 		spip_log("debut d'optimisation de la table $table");
 		if (sql_optimize($table)) {
 			spip_log("fin d'optimisation de la table $table");
@@ -103,13 +104,13 @@ function optimiser_tables_revision() {
 **/
 function anonymiser_base_revisions() {
 	if (defined('_CNIL_PERIODE') and _CNIL_PERIODE) {
-		$critere_cnil = 'date<"'.date('Y-m-d', time()-_CNIL_PERIODE).'"'
+		$critere_cnil = 'date<"' . date('Y-m-d', time() - _CNIL_PERIODE) . '"'
 			. ' AND (id_auteur LIKE "%.%" OR id_auteur LIKE "%:%")'; # ipv4 ou ipv6
 
 		$c = sql_countsel('spip_versions', $critere_cnil);
-		if ($c>0) {
+		if ($c > 0) {
 			spip_log("CNIL: masquer IP de $c versions anciennes", 'revisions');
-			sql_update('spip_versions', array('id_auteur' => 'MD5(id_auteur)'), $critere_cnil);
+			sql_update('spip_versions', ['id_auteur' => 'MD5(id_auteur)'], $critere_cnil);
 			return $c;
 		}
 	}

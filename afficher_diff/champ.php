@@ -35,7 +35,7 @@ function afficher_diff_champ_dist($champ, $old, $new, $format = 'diff') {
 			return $f($champ, $old, $new, $format);
 		}
 
-		$diff = new Diff(new DiffTexte);
+		$diff = new Diff(new DiffTexte());
 		$n = preparer_diff($new);
 		$o = preparer_diff($old);
 

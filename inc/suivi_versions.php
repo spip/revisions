@@ -15,7 +15,7 @@
  *
  * @package SPIP\Revisions\Versions
  **/
-if (!defined("_ECRIRE_INC_VERSION")) {
+if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
@@ -56,7 +56,7 @@ function revisions_diff($id_objet, $objet, $id_version, $court = false) {
 		}
 	}
 
-	return $court ? _T('taille_octets', array('taille' => $nb)) : $rev;
+	return $court ? _T('taille_octets', ['taille' => $nb]) : $rev;
 }
 
 /**
@@ -82,7 +82,7 @@ function retrouver_champ_version_objet($objet, $id_objet, $id_version, $champ, &
 	// Remonter dans le temps pour trouver le champ en question
 	// pour la version demandee
 	$id_ref = $id_version - 1;
-	$prev = array();
+	$prev = [];
 	while (!isset($prev[$champ]) and $id_ref > 0) {
 		$prev = recuperer_version($id_objet, $objet, $id_ref--);
 	}
@@ -126,13 +126,17 @@ function revision_comparee($id_objet, $objet, $id_version, $format = 'diff', $id
 
 	// chercher le numero de la version precedente
 	if (!$id_diff) {
-		$id_diff = sql_getfetsel("id_version", "spip_versions",
-			"id_objet=" . intval($id_objet) . " AND id_version < " . intval($id_version) . " AND objet=" . sql_quote($objet),
-			"", "id_version DESC", "1");
+		$id_diff = sql_getfetsel(
+			'id_version',
+			'spip_versions',
+			'id_objet=' . intval($id_objet) . ' AND id_version < ' . intval($id_version) . ' AND objet=' . sql_quote($objet),
+			'',
+			'id_version DESC',
+			'1'
+		);
 	}
 
 	if ($id_version && $id_diff) {
-
 		// si l'ordre est inverse, on remet a l'endroit
 		if ($id_diff > $id_version) {
 			$t = $id_version;
@@ -143,7 +147,7 @@ function revision_comparee($id_objet, $objet, $id_version, $format = 'diff', $id
 		$old = recuperer_version($id_objet, $objet, $id_diff);
 		$new = recuperer_version($id_objet, $objet, $id_version);
 
-		$textes = array();
+		$textes = [];
 
 		// Mode "diff": on ne s'interesse qu'aux champs presents dans $new
 		// Mode "complet": on veut afficher tous les champs
@@ -180,7 +184,8 @@ function revision_comparee($id_objet, $objet, $id_version, $format = 'diff', $id
 
 			// si on a les deux, le diff nous interesse, plus ou moins court
 			if (isset($new[$champ]) and isset($old[$champ])) {
-				if (!$afficher_diff = charger_fonction($objet . "_" . $champ, 'afficher_diff', true)
+				if (
+					!$afficher_diff = charger_fonction($objet . '_' . $champ, 'afficher_diff', true)
 					and !$afficher_diff = charger_fonction($champ, 'afficher_diff', true)
 				) {
 					$afficher_diff = (strncmp($champ, 'jointure_', 9) == 0 ? $afficher_diff_jointure : $afficher_diff_champ);
