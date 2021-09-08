@@ -15,7 +15,7 @@
  *
  * @package SPIP\Revisions\Fonctions
  **/
-if (!defined("_ECRIRE_INC_VERSION")) {
+if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
@@ -31,9 +31,9 @@ define('_INTERVALLE_REVISIONS', 600);
  * @param array $paras Tableau de fragments déjà là
  * @return string[]      Tableau de fragments (paragraphes)
  **/
-function separer_paras($texte, $paras = array()) {
+function separer_paras($texte, $paras = []) {
 	if (!$paras) {
-		$paras = array();
+		$paras = [];
 	}
 	while (preg_match("/(\r\n?){2,}|\n{2,}/", $texte, $regs)) {
 		$p = strpos($texte, $regs[0]) + strlen($regs[0]);
@@ -69,7 +69,7 @@ function replace_fragment($id_objet, $objet, $version_min, $version_max, $id_fra
 	*/
 
 	// Attention a echapper $fragment, binaire potentiellement gz
-	return array(
+	return [
 		'id_objet' => intval($id_objet),
 		'objet' => $objet,
 		'id_fragment' => intval($id_fragment),
@@ -77,7 +77,7 @@ function replace_fragment($id_objet, $objet, $version_min, $version_max, $id_fra
 		'version_max' => intval($version_max),
 		'compress' => $compress,
 		'fragment' => $fragment
-	);
+	];
 }
 
 // https://code.spip.net/@envoi_replace_fragments
@@ -92,9 +92,13 @@ function envoi_replace_fragments($replaces) {
 // https://code.spip.net/@envoi_delete_fragments
 function envoi_delete_fragments($id_objet, $objet, $deletes) {
 	if (count($deletes)) {
-		sql_delete("spip_versions_fragments",
-			"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND ((" . join(") OR (",
-				$deletes) . "))");
+		sql_delete(
+			'spip_versions_fragments',
+			'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . ' AND ((' . join(
+				') OR (',
+				$deletes
+			) . '))'
+		);
 	}
 }
 
@@ -106,13 +110,18 @@ function envoi_delete_fragments($id_objet, $objet, $deletes) {
 function ajouter_fragments($id_objet, $objet, $id_version, $fragments) {
 	global $agregation_versions;
 
-	$replaces = array();
+	$replaces = [];
 	foreach ($fragments as $id_fragment => $texte) {
 		$nouveau = true;
 		// Recuperer la version la plus recente
-		$row = sql_fetsel("compress, fragment, version_min, version_max", "spip_versions_fragments",
-			"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND id_fragment=$id_fragment AND version_min<=$id_version",
-			"", "version_min DESC", "1");
+		$row = sql_fetsel(
+			'compress, fragment, version_min, version_max',
+			'spip_versions_fragments',
+			'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . " AND id_fragment=$id_fragment AND version_min<=$id_version",
+			'',
+			'version_min DESC',
+			'1'
+		);
 
 		if ($row) {
 			$fragment = $row['fragment'];
@@ -129,7 +138,7 @@ function ajouter_fragments($id_objet, $objet, $id_version, $fragments) {
 			}
 		}
 		if ($nouveau) {
-			$fragment = array($id_version => $texte);
+			$fragment = [$id_version => $texte];
 			$version_min = $id_version;
 		} else {
 			// Ne pas dupliquer les fragments non modifies
@@ -160,16 +169,21 @@ function ajouter_fragments($id_objet, $objet, $id_version, $fragments) {
 function supprimer_fragments($id_objet, $objet, $version_debut, $version_fin) {
 	global $agregation_versions;
 
-	$replaces = array();
-	$deletes = array();
+	$replaces = [];
+	$deletes = [];
 
 	// D'abord, vider les fragments inutiles
-	sql_delete("spip_versions_fragments",
-		"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND version_min>=$version_debut AND version_max<=$version_fin");
+	sql_delete(
+		'spip_versions_fragments',
+		'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . " AND version_min>=$version_debut AND version_max<=$version_fin"
+	);
 
 	// Fragments chevauchant l'ensemble de l'intervalle, s'ils existent
-	$result = sql_select("id_fragment, compress, fragment, version_min, version_max", "spip_versions_fragments",
-		"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND version_min<$version_debut AND version_max>$version_fin");
+	$result = sql_select(
+		'id_fragment, compress, fragment, version_min, version_max',
+		'spip_versions_fragments',
+		'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . " AND version_min<$version_debut AND version_max>$version_fin"
+	);
 
 	while ($row = sql_fetch($result)) {
 		$id_fragment = $row['id_fragment'];
@@ -188,15 +202,24 @@ function supprimer_fragments($id_objet, $objet, $version_debut, $version_fin) {
 			}
 		}
 
-		$replaces[] = replace_fragment($id_objet, $objet,
-			$row['version_min'], $row['version_max'], $id_fragment, $fragment);
+		$replaces[] = replace_fragment(
+			$id_objet,
+			$objet,
+			$row['version_min'],
+			$row['version_max'],
+			$id_fragment,
+			$fragment
+		);
 	}
 
 	// Fragments chevauchant le debut de l'intervalle, s'ils existent
-	$result = sql_select("id_fragment, compress, fragment, version_min, version_max", "spip_versions_fragments",
-		"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND version_min<$version_debut AND version_max>=$version_debut AND version_max<=$version_fin");
+	$result = sql_select(
+		'id_fragment, compress, fragment, version_min, version_max',
+		'spip_versions_fragments',
+		'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . " AND version_min<$version_debut AND version_max>=$version_debut AND version_max<=$version_fin"
+	);
 
-	$deb_fragment = array();
+	$deb_fragment = [];
 	while ($row = sql_fetch($result)) {
 		$id_fragment = $row['id_fragment'];
 		$fragment = $row['fragment'];
@@ -220,8 +243,11 @@ function supprimer_fragments($id_objet, $objet, $version_debut, $version_fin) {
 	}
 
 	// Fragments chevauchant la fin de l'intervalle, s'ils existent
-	$result = sql_select("id_fragment, compress, fragment, version_min, version_max", "spip_versions_fragments",
-		"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND version_max>$version_fin AND version_min>=$version_debut AND version_min<=$version_fin");
+	$result = sql_select(
+		'id_fragment, compress, fragment, version_min, version_max',
+		'spip_versions_fragments',
+		'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . " AND version_max>$version_fin AND version_min>=$version_debut AND version_min<=$version_fin"
+	);
 
 	while ($row = sql_fetch($result)) {
 		$id_fragment = $row['id_fragment'];
@@ -252,9 +278,14 @@ function supprimer_fragments($id_objet, $objet, $version_debut, $version_fin) {
 				$fragment = $deb_fragment[$id_fragment] + $fragment;
 				$version_min = $deb_version_min[$id_fragment];
 			} else {
-				$replaces[] = replace_fragment($id_objet, $objet,
-					$deb_version_min[$id_fragment], $deb_version_max[$id_fragment],
-					$id_fragment, $deb_fragment[$id_fragment]);
+				$replaces[] = replace_fragment(
+					$id_objet,
+					$objet,
+					$deb_version_min[$id_fragment],
+					$deb_version_max[$id_fragment],
+					$id_fragment,
+					$deb_fragment[$id_fragment]
+				);
 			}
 			unset($deb_fragment[$id_fragment]);
 		}
@@ -268,9 +299,14 @@ function supprimer_fragments($id_objet, $objet, $version_debut, $version_fin) {
 	// Ajouter fragments restants
 	if (is_array($deb_fragment) && count($deb_fragment) > 0) {
 		foreach ($deb_fragment as $id_fragment => $fragment) {
-			$replaces[] = replace_fragment($id_objet, $objet,
-				$deb_version_min[$id_fragment], $deb_version_max[$id_fragment],
-				$id_fragment, $deb_fragment[$id_fragment]);
+			$replaces[] = replace_fragment(
+				$id_objet,
+				$objet,
+				$deb_version_min[$id_fragment],
+				$deb_version_max[$id_fragment],
+				$id_fragment,
+				$deb_fragment[$id_fragment]
+			);
 		}
 	}
 
@@ -288,17 +324,18 @@ function supprimer_fragments($id_objet, $objet, $version_debut, $version_fin) {
  * @return array           Couples id_fragment => texte
  */
 function recuperer_fragments($id_objet, $objet, $id_version) {
-	$fragments = array();
+	$fragments = [];
 
 	if ($id_version == 0) {
-		return array();
+		return [];
 	}
 
 	$result = sql_select(
-		"id_fragment, version_min, version_max, compress, fragment",
-		"spip_versions_fragments",
-		"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet)
-		. " AND version_min<=$id_version AND version_max>=$id_version");
+		'id_fragment, version_min, version_max, compress, fragment',
+		'spip_versions_fragments',
+		'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet)
+		. " AND version_min<=$id_version AND version_max>=$id_version"
+	);
 
 	while ($row = sql_fetch($result)) {
 		$id_fragment = $row['id_fragment'];
@@ -308,7 +345,7 @@ function recuperer_fragments($id_objet, $objet, $id_version) {
 		if ($row['compress'] > 0) {
 			$fragment_ = @gzuncompress($fragment);
 			if (strlen($fragment) && $fragment_ === false) {
-				$fragment = serialize(array($row['version_max'] => "[" . _T('forum_titre_erreur') . $id_fragment . "]"));
+				$fragment = serialize([$row['version_max'] => '[' . _T('forum_titre_erreur') . $id_fragment . ']']);
 			} else {
 				$fragment = $fragment_;
 			}
@@ -316,19 +353,19 @@ function recuperer_fragments($id_objet, $objet, $id_version) {
 		// tenter dedésérialiser le fragment, sinon écrire une erreur
 		$fragment_ = unserialize($fragment);
 		if (strlen($fragment) && $fragment_ === false) {
-			$fragment = array($row['version_max'] => "[" . _T('forum_titre_erreur') . $id_fragment . "]");
+			$fragment = [$row['version_max'] => '[' . _T('forum_titre_erreur') . $id_fragment . ']'];
 		} else {
 			$fragment = $fragment_;
 		}
 		// on retrouve le fragment le plus près de notre version
 		for ($i = $id_version; $i >= $version_min; $i--) {
 			if (isset($fragment[$i])) {
-
 				## hack destine a sauver les archives des sites iso-8859-1
 				## convertis en utf-8 (les archives ne sont pas converties
 				## mais ce code va les nettoyer ; pour les autres charsets
 				## la situation n'est pas meilleure ni pire qu'avant)
-				if ($GLOBALS['meta']['charset'] == 'utf-8'
+				if (
+					$GLOBALS['meta']['charset'] == 'utf-8'
 					and include_spip('inc/charsets')
 					and !is_utf8($fragment[$i])
 				) {
@@ -352,22 +389,22 @@ function recuperer_fragments($id_objet, $objet, $id_version) {
 //
 // https://code.spip.net/@apparier_paras
 function apparier_paras($src, $dest, $flou = true) {
-	$src_dest = array();
-	$dest_src = array();
+	$src_dest = [];
+	$dest_src = [];
 
-	$t1 = $t2 = array();
+	$t1 = $t2 = [];
 
-	$md1 = $md2 = array();
-	$gz_min1 = $gz_min2 = array();
-	$gz_trans1 = $gz_trans2 = array();
-	$l1 = $l2 = array();
+	$md1 = $md2 = [];
+	$gz_min1 = $gz_min2 = [];
+	$gz_trans1 = $gz_trans2 = [];
+	$l1 = $l2 = [];
 
 	// Nettoyage de la ponctuation pour faciliter l'appariement
 	foreach ($src as $key => $val) {
-		$t1[$key] = strval(preg_replace("/[[:punct:][:space:]]+/", " ", $val));
+		$t1[$key] = strval(preg_replace('/[[:punct:][:space:]]+/', ' ', $val));
 	}
 	foreach ($dest as $key => $val) {
-		$t2[$key] = strval(preg_replace("/[[:punct:][:space:]]+/", " ", $val));
+		$t2[$key] = strval(preg_replace('/[[:punct:][:space:]]+/', ' ', $val));
 	}
 
 	// Premiere passe : chercher les correspondance exactes
@@ -424,7 +461,7 @@ function apparier_paras($src, $dest, $flou = true) {
 	}
 
 	// Retourner les mappings
-	return array($src_dest, $dest_src);
+	return [$src_dest, $dest_src];
 }
 
 /**
@@ -441,7 +478,7 @@ function apparier_paras($src, $dest, $flou = true) {
 **/
 function recuperer_version_complete($id_objet, $objet, $id_version) {
 	if (!$id_version or !$id_objet or !$objet) {
-		return array();
+		return [];
 	}
 
 	include_spip('inc/suivi_versions');
@@ -470,13 +507,18 @@ function recuperer_version_complete($id_objet, $objet, $id_version) {
  */
 function recuperer_version($id_objet, $objet, $id_version) {
 
-	$champs = sql_getfetsel("champs", "spip_versions",
-		"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND id_version=" . intval($id_version));
+	$champs = sql_getfetsel(
+		'champs',
+		'spip_versions',
+		'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . ' AND id_version=' . intval($id_version)
+	);
 	if (!$champs or !is_array($champs = unserialize($champs))) {
-		return array();
+		return [];
 	} else {
-		return reconstuire_version($champs,
-			recuperer_fragments($id_objet, $objet, $id_version));
+		return reconstuire_version(
+			$champs,
+			recuperer_fragments($id_objet, $objet, $id_version)
+		);
 	}
 }
 
@@ -492,7 +534,7 @@ function recuperer_version($id_objet, $objet, $id_version) {
  * @param array $res Couples (champ => texte) déjà connus
  * @return array            Couples (champ => texte)
  */
-function reconstuire_version($champs, $fragments, $res = array()) {
+function reconstuire_version($champs, $fragments, $res = []) {
 
 	static $msg;
 	if (!$msg) {
@@ -516,8 +558,10 @@ function reconstuire_version($champs, $fragments, $res = array()) {
 
 // https://code.spip.net/@supprimer_versions
 function supprimer_versions($id_objet, $objet, $version_min, $version_max) {
-	sql_delete("spip_versions",
-		"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND id_version>=$version_min AND id_version<=$version_max");
+	sql_delete(
+		'spip_versions',
+		'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . " AND id_version>=$version_min AND id_version<=$version_max"
+	);
 
 	supprimer_fragments($id_objet, $objet, $version_min, $version_max);
 }
@@ -536,8 +580,8 @@ function supprimer_versions($id_objet, $objet, $version_min, $version_max) {
  * @return int
  *     id_version : identifiant de la version
  **/
-function ajouter_version($id_objet, $objet, $champs, $titre_version = "", $id_auteur = null) {
-	$paras = $paras_old = $paras_champ = $fragments = array();
+function ajouter_version($id_objet, $objet, $champs, $titre_version = '', $id_auteur = null) {
+	$paras = $paras_old = $paras_champ = $fragments = [];
 
 	// Attention a une edition anonyme (type wiki): id_auteur n'est pas
 	// definie, on enregistre alors le numero IP
@@ -549,13 +593,12 @@ function ajouter_version($id_objet, $objet, $champs, $titre_version = "", $id_au
 	$permanent = empty($titre_version) ? 'non' : '';
 
 	// Detruire les tentatives d'archivages non abouties en 1 heure
-	sql_delete('spip_versions', array(
-			"id_objet=" . intval($id_objet),
-			"objet=" . sql_quote($objet),
-			"id_version <= 0",
-			"date < DATE_SUB(" . sql_quote(date('Y-m-d H:i:s')) . ", INTERVAL " . _INTERVALLE_REVISIONS . " SECOND)"
-		)
-	);
+	sql_delete('spip_versions', [
+			'id_objet=' . intval($id_objet),
+			'objet=' . sql_quote($objet),
+			'id_version <= 0',
+			'date < DATE_SUB(' . sql_quote(date('Y-m-d H:i:s')) . ', INTERVAL ' . _INTERVALLE_REVISIONS . ' SECOND)'
+		]);
 
 	// Signaler qu'on opere en mettant un numero de version negatif
 	// distinctif (pour eviter la violation d'unicite)
@@ -565,14 +608,14 @@ function ajouter_version($id_objet, $objet, $champs, $titre_version = "", $id_au
 	$date = ($sec . substr($ms, 1, 4)) - 20;
 	$datediff = ($sec - mktime(0, 0, 0, 9, 1, 2007)) * 1000000 + substr($ms, 2, strlen($ms) - 4);
 
-	$valeurs = array(
+	$valeurs = [
 		'id_objet' => $id_objet,
 		'objet' => $objet,
 		'id_version' => (0 - $datediff),
 		'date' => date('Y-m-d H:i:s'),
 		'id_auteur' => $str_auteur, //  varchar ici!
 		'titre_version' => $date
-	);
+	];
 	sql_insertq('spip_versions', $valeurs);
 
 	// Eviter les validations entremelees en s'endormant s'il existe
@@ -587,30 +630,49 @@ function ajouter_version($id_objet, $objet, $champs, $titre_version = "", $id_au
 	// 4. enregistrer une autre modif dans les 15 secondes
 # 	  sleep(15);
 	$delai = $sec - 10;
-	while (sql_countsel('spip_versions',
-		"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND id_version < 0 AND 0.0+titre_version < $date AND titre_version<>" . sql_quote($date,
-			'', 'text') . " AND 0.0+titre_version > $delai")) {
+	while (
+		sql_countsel(
+			'spip_versions',
+			'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . " AND id_version < 0 AND 0.0+titre_version < $date AND titre_version<>" . sql_quote(
+				$date,
+				'',
+				'text'
+			) . " AND 0.0+titre_version > $delai"
+		)
+	) {
 		spip_log("version $objet $id_objet :insertion en cours avant $date ($delai)", 'revisions');
 		sleep(1);
 		$delai++;
 	}
 #   sleep(15); 	spip_log("sortie $sec $delai");
 	// Determiner le numero du prochain fragment
-	$next = sql_fetsel("id_fragment", "spip_versions_fragments",
-		"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet), "", "id_fragment DESC", "1");
+	$next = sql_fetsel(
+		'id_fragment',
+		'spip_versions_fragments',
+		'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet),
+		'',
+		'id_fragment DESC',
+		'1'
+	);
 
 	$onlylock = '';
 
 	// Examiner la derniere version
-	$row = sql_fetsel("id_version, champs, id_auteur, date, permanent", "spip_versions",
-		"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND id_version > 0", '', "id_version DESC",
-		"1"); // le champ id_auteur est un varchar dans cette table
+	$row = sql_fetsel(
+		'id_version, champs, id_auteur, date, permanent',
+		'spip_versions',
+		'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . ' AND id_version > 0',
+		'',
+		'id_version DESC',
+		'1'
+	); // le champ id_auteur est un varchar dans cette table
 
 	if ($row) {
 		$id_version = $row['id_version'];
 		$paras_old = recuperer_fragments($id_objet, $objet, $id_version);
 		$champs_old = $row['champs'];
-		if ($row['id_auteur'] != $str_auteur
+		if (
+			$row['id_auteur'] != $str_auteur
 			or $row['permanent'] != 'non'
 			or strtotime($row['date']) < (time() - _INTERVALLE_REVISIONS)
 		) {
@@ -632,9 +694,9 @@ function ajouter_version($id_objet, $objet, $champs, $titre_version = "", $id_au
 	$next = !$next ? 1 : ($next['id_fragment'] + 1);
 
 	// Generer les nouveaux fragments
-	$codes = array();
+	$codes = [];
 	foreach ($champs as $nom => $texte) {
-		$codes[$nom] = array();
+		$codes[$nom] = [];
 		$paras = separer_paras($texte, $paras);
 		$paras_champ[$nom] = count($paras);
 	}
@@ -649,7 +711,7 @@ function ajouter_version($id_objet, $objet, $champs, $titre_version = "", $id_au
 
 		// eviter une notice PHP au tout debut de la boucle
 		// on ajoute ''=>0 en debut de tableau.
-		$paras_champ = array($nom => 0) + $paras_champ;
+		$paras_champ = [$nom => 0] + $paras_champ;
 
 		for ($i = 0; $i < $n; $i++) {
 			while ($i >= $paras_champ[$nom]) {
@@ -676,23 +738,28 @@ function ajouter_version($id_objet, $objet, $champs, $titre_version = "", $id_au
 	// sinon la mise a jour efface en fait le verrou.
 
 	if (!$onlylock) {
-		sql_updateq('spip_versions', array(
+		sql_updateq(
+			'spip_versions',
+			[
 			'id_version' => $id_version,
 			'date' => date('Y-m-d H:i:s'),
 			'champs' => serialize($codes),
 			'permanent' => $permanent,
 			'titre_version' => $titre_version
-		),
-			"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND id_version < 0 AND titre_version='$date'");
+			],
+			'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . " AND id_version < 0 AND titre_version='$date'"
+		);
 	} else {
-		sql_updateq('spip_versions', array(
+		sql_updateq('spip_versions', [
 			'date' => date('Y-m-d H:i:s'),
 			'champs' => serialize($codes),
 			'permanent' => $permanent,
 			'titre_version' => $titre_version
-		), "id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND id_version=$id_version");
-		sql_delete("spip_versions",
-			"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND id_version < 0 AND titre_version ='$date'");
+		], 'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . " AND id_version=$id_version");
+		sql_delete(
+			'spip_versions',
+			'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . " AND id_version < 0 AND titre_version ='$date'"
+		);
 	}
 	spip_log($onlylock . "memorise la version $id_version de l'objet $objet $id_objet $titre_version", 'revisions');
 
@@ -704,7 +771,7 @@ function ajouter_version($id_objet, $objet, $champs, $titre_version = "", $id_au
 // https://code.spip.net/@propre_diff
 function propre_diff($texte) {
 
-	$span_diff = array();
+	$span_diff = [];
 	if (preg_match_all(',<(/)?(span|div) (class|rem)="diff-[^>]*>,', $texte, $regs, PREG_SET_ORDER)) {
 		$regs = array_slice($regs, 0, 500); #limiter la casse s'il y en a trop
 		foreach ($regs as $c => $reg) {
@@ -714,13 +781,19 @@ function propre_diff($texte) {
 
 	// [ ...<span diff> -> lien ]
 	// < tag <span diff> >
-	$texte = preg_replace(',<([^>]*?@@@SPIP_DIFF[0-9]+@@@),',
-		'&lt;\1', $texte);
+	$texte = preg_replace(
+		',<([^>]*?@@@SPIP_DIFF[0-9]+@@@),',
+		'&lt;\1',
+		$texte
+	);
 
 	# attention ici astuce seulement deux @@ finals car on doit eviter
 	# deux patterns a suivre, afin de pouvoir prendre [ mais eviter [[
-	$texte = preg_replace(',(^|[^[])[[]([^[\]]*@@@SPIP_DIFF[0-9]+@@),',
-		'\1&#91;\2', $texte);
+	$texte = preg_replace(
+		',(^|[^[])[[]([^[\]]*@@@SPIP_DIFF[0-9]+@@),',
+		'\1&#91;\2',
+		$texte
+	);
 
 	// desactiver TeX & toujours-paragrapher
 	$tex = $GLOBALS['traiter_math'];
@@ -777,20 +850,21 @@ function propre_diff($texte) {
  *     Liste des champs versionnés
  */
 function liste_champs_versionnes($table) {
-	$liste_objets_versionnees = is_array(unserialize($GLOBALS['meta']['objets_versions'])) ? unserialize($GLOBALS['meta']['objets_versions']) : array();
+	$liste_objets_versionnees = is_array(unserialize($GLOBALS['meta']['objets_versions'])) ? unserialize($GLOBALS['meta']['objets_versions']) : [];
 
 	if (!in_array($table, $liste_objets_versionnees)) {
-		return array();
+		return [];
 	}
 
 	include_spip('base/objets');
-	if ($infos = lister_tables_objets_sql($table)
+	if (
+		$infos = lister_tables_objets_sql($table)
 		and isset($infos['champs_versionnes'])
 	) {
 		return $infos['champs_versionnes'];
 	}
 
-	return array();
+	return [];
 }
 
 /**
@@ -805,21 +879,21 @@ function liste_champs_versionnes($table) {
 function recuperer_valeur_champ_jointure($objet, $id_objet, $jointure) {
 	$objet_joint = objet_type($jointure);
 	include_spip('action/editer_liens');
-	$v = array();
+	$v = [];
 	if (objet_associable($objet_joint)) {
-		$liens = objet_trouver_liens(array($objet_joint => '*'), array($objet => $id_objet));
+		$liens = objet_trouver_liens([$objet_joint => '*'], [$objet => $id_objet]);
 		foreach ($liens as $l) {
 			$v[] = $l[$objet_joint];
 		}
 	} elseif (objet_associable($objet)) {
-		$liens = objet_trouver_liens(array($objet => $id_objet), array($objet_joint => '*'));
+		$liens = objet_trouver_liens([$objet => $id_objet], [$objet_joint => '*']);
 		foreach ($liens as $l) {
 			$v[] = $l[$objet];
 		}
 	}
 	sort($v);
 
-	return implode(",", $v);
+	return implode(',', $v);
 }
 
 /**
@@ -848,14 +922,21 @@ function verifier_premiere_revision($table, $objet, $id_objet, $champs = null, $
 		return false;
 	}
 
-	if (!$id_version = sql_getfetsel('id_version', 'spip_versions',
-		"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet), '', 'id_version DESC', '0,1')
+	if (
+		!$id_version = sql_getfetsel(
+			'id_version',
+			'spip_versions',
+			'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet),
+			'',
+			'id_version DESC',
+			'0,1'
+		)
 	) {
 		// recuperer toutes les valeurs actuelles des champs
 		// pour l'objet
-		$originaux = sql_fetsel("*", $table, "$id_table_objet=" . intval($id_objet));
+		$originaux = sql_fetsel('*', $table, "$id_table_objet=" . intval($id_objet));
 		$premiere = false;
-		$champs_originaux = array();
+		$champs_originaux = [];
 
 		foreach ($champs as $v) {
 			if (isset($originaux[$v])) {
@@ -876,26 +957,36 @@ function verifier_premiere_revision($table, $objet, $id_objet, $champs = null, $
 
 			// "trouver" une date raisonnable pour la version initiale
 
-			$date_modif = "";
-			foreach (array('date_modif', 'maj') as $d) {
+			$date_modif = '';
+			foreach (['date_modif', 'maj'] as $d) {
 				if (!$date_modif and isset($originaux[$d]) and $t = strtotime($originaux[$d])) {
-					$date_modif = date("Y-m-d H:i:s", $t - 20);
+					$date_modif = date('Y-m-d H:i:s', $t - 20);
 				}
 			}
-			if (!$date_modif
+			if (
+				!$date_modif
 				and isset($desc['date'])
 				and isset($originaux[$desc['date']])
 			) {
 				$date_modif = $originaux[$desc['date']];
 			} elseif (!$date_modif) {
-				$date_modif = date("Y-m-d H:i:s", time() - 20);
+				$date_modif = date('Y-m-d H:i:s', time() - 20);
 			}
 
-			if ($id_version = ajouter_version($id_objet, $objet, $champs_originaux, _T('revisions:version_initiale'),
-				$id_auteur)
+			if (
+				$id_version = ajouter_version(
+					$id_objet,
+					$objet,
+					$champs_originaux,
+					_T('revisions:version_initiale'),
+					$id_auteur
+				)
 			) {
-				sql_updateq('spip_versions', array('date' => $date_modif),
-					"id_objet=" . intval($id_objet) . " AND objet=" . sql_quote($objet) . " AND id_version=$id_version");
+				sql_updateq(
+					'spip_versions',
+					['date' => $date_modif],
+					'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . " AND id_version=$id_version"
+				);
 			}
 		}
 	}

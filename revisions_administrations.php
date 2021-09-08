@@ -33,7 +33,8 @@ function revisions_upgrade($nom_meta_base_version, $version_cible) {
 	// pour gerer l'historique des installations SPIP <=2.1
 	if (!isset($GLOBALS['meta'][$nom_meta_base_version])) {
 		$trouver_table = charger_fonction('trouver_table', 'base');
-		if ($desc = $trouver_table('spip_versions')
+		if (
+			$desc = $trouver_table('spip_versions')
 			and isset($desc['exist']) and $desc['exist']
 			and isset($desc['field']['id_article'])
 		) {
@@ -42,51 +43,51 @@ function revisions_upgrade($nom_meta_base_version, $version_cible) {
 		// si pas de table en base, on fera une simple creation de base
 	}
 
-	$maj = array();
-	$maj['create'] = array(
-		array('maj_tables', array('spip_versions', 'spip_versions_fragments')),
-		array('revisions_update_meta'),
-	);
+	$maj = [];
+	$maj['create'] = [
+		['maj_tables', ['spip_versions', 'spip_versions_fragments']],
+		['revisions_update_meta'],
+	];
 
-	$maj['1.1.0'] = array(
+	$maj['1.1.0'] = [
 		// Ajout du champs objet et modification du champs id_article en id_objet
 		// sur les 2 tables spip_versions et spip_versions_fragments
-		array('sql_alter', 'TABLE spip_versions CHANGE id_article id_objet bigint(21) DEFAULT 0 NOT NULL'),
-		array('sql_alter', "TABLE spip_versions ADD objet VARCHAR (25) DEFAULT '' NOT NULL AFTER id_objet"),
+		['sql_alter', 'TABLE spip_versions CHANGE id_article id_objet bigint(21) DEFAULT 0 NOT NULL'],
+		['sql_alter', "TABLE spip_versions ADD objet VARCHAR (25) DEFAULT '' NOT NULL AFTER id_objet"],
 		// Les id_objet restent les id_articles puisque les révisions n'étaient possibles que sur les articles
-		array('sql_updateq', 'spip_versions', array('objet' => 'article'), "objet=''"),
+		['sql_updateq', 'spip_versions', ['objet' => 'article'], "objet=''"],
 		// Changement des clefs primaires également
-		array('sql_alter', 'TABLE spip_versions DROP PRIMARY KEY'),
-		array('sql_alter', 'TABLE spip_versions ADD PRIMARY KEY (id_version, id_objet, objet)'),
+		['sql_alter', 'TABLE spip_versions DROP PRIMARY KEY'],
+		['sql_alter', 'TABLE spip_versions ADD PRIMARY KEY (id_version, id_objet, objet)'],
 
-		array('sql_alter', 'TABLE spip_versions_fragments CHANGE id_article id_objet bigint(21) DEFAULT 0 NOT NULL'),
-		array('sql_alter', "TABLE spip_versions_fragments ADD objet VARCHAR (25) DEFAULT '' NOT NULL AFTER id_objet"),
+		['sql_alter', 'TABLE spip_versions_fragments CHANGE id_article id_objet bigint(21) DEFAULT 0 NOT NULL'],
+		['sql_alter', "TABLE spip_versions_fragments ADD objet VARCHAR (25) DEFAULT '' NOT NULL AFTER id_objet"],
 		// Les id_objet restent les id_articles puisque les révisions n'étaient possibles que sur les articles
-		array('sql_updateq', 'spip_versions_fragments', array('objet' => 'article'), "objet=''"),
+		['sql_updateq', 'spip_versions_fragments', ['objet' => 'article'], "objet=''"],
 		// Changement des clefs primaires également
-		array('sql_alter', 'TABLE spip_versions_fragments DROP PRIMARY KEY'),
-		array('sql_alter', 'TABLE spip_versions_fragments ADD PRIMARY KEY (id_objet, objet, id_fragment, version_min)'),
-		array('revisions_update_meta')
-	);
-	$maj['1.1.2'] = array(
-		array('revisions_update_meta'),
-		array('sql_updateq', 'spip_versions', array('objet' => 'article'), "objet=''"),
-		array('sql_updateq', 'spip_versions_fragments', array('objet' => 'article'), "objet=''"),
-	);
-	$maj['1.1.3'] = array(
-		array('sql_alter', 'TABLE spip_versions DROP KEY id_objet'),
-		array('sql_alter', 'TABLE spip_versions ADD INDEX id_version (id_version)'),
-		array('sql_alter', 'TABLE spip_versions ADD INDEX id_objet (id_objet)'),
-		array('sql_alter', 'TABLE spip_versions ADD INDEX objet (objet)')
-	);
-	$maj['1.1.4'] = array(
-		array('sql_alter', "TABLE spip_versions CHANGE permanent permanent char(3) DEFAULT '' NOT NULL"),
-		array('sql_alter', "TABLE spip_versions CHANGE champs champs text DEFAULT '' NOT NULL"),
-	);
-	$maj['1.2.0'] = array(
-		array('revisions_uncompress_fragments'),
-		array('revisions_repair_unserialized_fragments'),
-	);
+		['sql_alter', 'TABLE spip_versions_fragments DROP PRIMARY KEY'],
+		['sql_alter', 'TABLE spip_versions_fragments ADD PRIMARY KEY (id_objet, objet, id_fragment, version_min)'],
+		['revisions_update_meta']
+	];
+	$maj['1.1.2'] = [
+		['revisions_update_meta'],
+		['sql_updateq', 'spip_versions', ['objet' => 'article'], "objet=''"],
+		['sql_updateq', 'spip_versions_fragments', ['objet' => 'article'], "objet=''"],
+	];
+	$maj['1.1.3'] = [
+		['sql_alter', 'TABLE spip_versions DROP KEY id_objet'],
+		['sql_alter', 'TABLE spip_versions ADD INDEX id_version (id_version)'],
+		['sql_alter', 'TABLE spip_versions ADD INDEX id_objet (id_objet)'],
+		['sql_alter', 'TABLE spip_versions ADD INDEX objet (objet)']
+	];
+	$maj['1.1.4'] = [
+		['sql_alter', "TABLE spip_versions CHANGE permanent permanent char(3) DEFAULT '' NOT NULL"],
+		['sql_alter', "TABLE spip_versions CHANGE champs champs text DEFAULT '' NOT NULL"],
+	];
+	$maj['1.2.0'] = [
+		['revisions_uncompress_fragments'],
+		['revisions_repair_unserialized_fragments'],
+	];
 
 	include_spip('base/upgrade');
 	maj_plugin($nom_meta_base_version, $version_cible, $maj);
@@ -123,10 +124,10 @@ function revisions_uncompress_fragments() {
 			$fragment = 'corrompu-gz';
 		}
 
-		$set = array(
+		$set = [
 			'compress' => 0,
 			'fragment' => $fragment,
-		);
+		];
 
 		sql_updateq(
 			'spip_versions_fragments',
@@ -143,12 +144,12 @@ function revisions_uncompress_fragments() {
 	if (sql_countsel('spip_versions_fragments', 'compress=' . intval(1)) > 0) {
 		revisions_uncompress_fragments();
 	}
-	sql_updateq('spip_versions_fragments', array('compress' => -1));
+	sql_updateq('spip_versions_fragments', ['compress' => -1]);
 }
 
 function revisions_repair_unserialized_fragments() {
 	$n = sql_countsel('spip_versions_fragments', 'compress=' . intval(-1));
-	spip_log("$n fragments a verifier", 'maj.'._LOG_ERREUR);
+	spip_log("$n fragments a verifier", 'maj.' . _LOG_ERREUR);
 	if ($n > 20000) {
 		$limit = '0,20000';
 	} else {
@@ -166,9 +167,9 @@ function revisions_repair_unserialized_fragments() {
 
 	foreach ($res as $row) {
 		$fragment = $row['fragment'];
-		$set = array(
+		$set = [
 			'compress' => 0,
-		);
+		];
 
 		// verifier que le fragment est bien serializable
 		if (unserialize($fragment) === false and strncmp($fragment, 'corrompu', 8) !== 0) {
@@ -277,11 +278,11 @@ function revisions_update_meta() {
 	$config = charger_fonction('config', 'inc');
 	$config();
 	if (isset($GLOBALS['meta']['articles_versions']) and $GLOBALS['meta']['articles_versions'] == 'oui') {
-		ecrire_meta('objets_versions', serialize(array('articles')));
+		ecrire_meta('objets_versions', serialize(['articles']));
 	}
 	effacer_meta('articles_versions');
 	if (!$versions = unserialize($GLOBALS['meta']['objets_versions'])) {
-		$versions = array();
+		$versions = [];
 	}
 	$versions = array_map('table_objet_sql', $versions);
 	ecrire_meta('objets_versions', serialize($versions));

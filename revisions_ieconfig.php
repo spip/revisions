@@ -5,6 +5,7 @@
  *
  * @package SPIP\Revisions\Pipelines
  **/
+
 if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }

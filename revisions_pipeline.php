@@ -29,7 +29,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
  */
 function revisions_boite_infos($flux) {
 	$type = $flux['args']['type'];
-	if ($id = intval($flux['args']['id'])
+	if (
+		$id = intval($flux['args']['id'])
 		and $tables = unserialize($GLOBALS['meta']['objets_versions'])
 		and in_array(table_objet_sql($type), $tables)
 		and autoriser('voirrevisions', $type, $id)
@@ -38,8 +39,11 @@ function revisions_boite_infos($flux) {
 		and sql_countsel('spip_versions', 'id_objet=' . intval($id) . ' AND objet = ' . sql_quote($type)) > 1
 	) {
 		include_spip('inc/presentation');
-		$flux['data'] .= icone_horizontale(_T('revisions:info_historique_lien'),
-			generer_url_ecrire('revision', "id_objet=$id&objet=$type"), "revision-24.png");
+		$flux['data'] .= icone_horizontale(
+			_T('revisions:info_historique_lien'),
+			generer_url_ecrire('revision', "id_objet=$id&objet=$type"),
+			'revision-24.png'
+		);
 	}
 
 	return $flux;
@@ -56,14 +60,15 @@ function revisions_boite_infos($flux) {
  */
 function revisions_affiche_milieu($flux) {
 	// la bonne page et des objets révisables cochées !
-	if (in_array($flux['args']['exec'], array('accueil', 'suivi_edito'))
+	if (
+		in_array($flux['args']['exec'], ['accueil', 'suivi_edito'])
 		and unserialize($GLOBALS['meta']['objets_versions'])
 	) {
-		$contexte = array();
+		$contexte = [];
 		if ($GLOBALS['visiteur_session']['statut'] !== '0minirezo') {
 			$contexte['id_auteur'] = $GLOBALS['visiteur_session']['id_auteur'];
 		}
-		$flux['data'] .= recuperer_fond('prive/objets/liste/versions', $contexte, array('ajax' => true));
+		$flux['data'] .= recuperer_fond('prive/objets/liste/versions', $contexte, ['ajax' => true]);
 	}
 
 	return $flux;
@@ -93,7 +98,8 @@ function revisions_configurer_liste_metas($metas) {
  * @return array $flux  Données du pipeline
  */
 function revisions_formulaire_charger($flux) {
-	if (strncmp($flux['args']['form'], 'editer_', 7) == 0
+	if (
+		strncmp($flux['args']['form'], 'editer_', 7) == 0
 		and $id_version = _request('id_version')
 		and $objet = substr($flux['args']['form'], 7)
 		and $id_table_objet = id_table_objet($objet)
@@ -102,8 +108,8 @@ function revisions_formulaire_charger($flux) {
 		and !$flux['args']['je_suis_poste']
 	) {
 		// ajouter un message convival pour indiquer qu'on a restaure la version
-		$flux['data']['message_ok'] = _T('revisions:icone_restaurer_version', array('version' => $id_version));
-		$flux['data']['message_ok'] .= "<br />" . _T('revisions:message_valider_recuperer_version');
+		$flux['data']['message_ok'] = _T('revisions:icone_restaurer_version', ['version' => $id_version]);
+		$flux['data']['message_ok'] .= '<br />' . _T('revisions:message_valider_recuperer_version');
 		// recuperer la version
 		include_spip('inc/revisions');
 		$champs = recuperer_version_complete($id, $objet, $id_version);
@@ -170,7 +176,8 @@ function revisions_post_insertion($x) {
  */
 function revisions_pre_edition($x) {
 	// ne rien faire quand on passe ici en controle md5
-	if (!isset($x['args']['action'])
+	if (
+		!isset($x['args']['action'])
 		or $x['args']['action'] !== 'controler'
 	) {
 		$table = $x['args']['table'];
@@ -196,7 +203,8 @@ function revisions_pre_edition($x) {
  * @return array $x  Données du pipeline
  */
 function revisions_pre_edition_lien($x) {
-	if (intval($x['args']['id_objet_source']) > 0
+	if (
+		intval($x['args']['id_objet_source']) > 0
 		and intval($x['args']['id_objet']) > 0
 	) {
 		$table = table_objet_sql($x['args']['objet']);
@@ -210,7 +218,8 @@ function revisions_pre_edition_lien($x) {
 		if (isset($GLOBALS['premiere_revision']["$table:" . $id_objet])) {
 			$GLOBALS['premiere_revision']["$table:" . $id_objet] = 0;
 		} // ex : si le champ jointure_mots est versionnable sur les articles
-		elseif ($versionnes = liste_champs_versionnes($table)
+		elseif (
+			$versionnes = liste_champs_versionnes($table)
 			and in_array($j = 'jointure_' . table_objet($x['args']['objet_source']), $versionnes)
 		) {
 			verifier_premiere_revision($table, $x['args']['objet'], $id_objet, $versionnes, -1);
@@ -226,7 +235,8 @@ function revisions_pre_edition_lien($x) {
 		if (isset($GLOBALS['premiere_revision']["$table:" . $id_objet])) {
 			$GLOBALS['premiere_revision']["$table:" . $id_objet] = 0;
 		} // ex : si le champ jointure_articles est versionnable sur les mots
-		elseif ($versionnes = liste_champs_versionnes($table)
+		elseif (
+			$versionnes = liste_champs_versionnes($table)
 			and in_array($j = 'jointure_' . table_objet($x['args']['objet']), $versionnes)
 		) {
 			verifier_premiere_revision($table, $x['args']['objet_source'], $id_objet, $versionnes, -1);
@@ -246,7 +256,7 @@ function revisions_post_edition($x) {
 	include_spip('inc/revisions');
 	if (isset($x['args']['table']) and $versionnes = liste_champs_versionnes($x['args']['table'])) {
 		// Regarder si au moins une des modifs est versionnable
-		$champs = array();
+		$champs = [];
 		$table = $x['args']['table'];
 		$objet = isset($x['args']['type']) ? $x['args']['type'] : objet_type($table);
 		include_spip('inc/session');
@@ -294,10 +304,10 @@ function revisions_post_edition_lien($x) {
 			'data' => $couples
 		)
 	*/
-	if (intval($x['args']['id_objet_source']) > 0
+	if (
+		intval($x['args']['id_objet_source']) > 0
 		and intval($x['args']['id_objet']) > 0
 	) {
-
 		$table = table_objet_sql($x['args']['objet']);
 		$id_objet = $x['args']['id_objet'];
 		include_spip('inc/revisions');
@@ -311,12 +321,13 @@ function revisions_post_edition_lien($x) {
 		if (isset($GLOBALS['premiere_revision']["$table:" . $id_objet])) {
 			$GLOBALS['premiere_revision']["$table:" . $id_objet] = 0;
 		} // ex : si le champ jointure_mots est versionnable sur les articles
-		elseif ($versionnes = liste_champs_versionnes($table)
+		elseif (
+			$versionnes = liste_champs_versionnes($table)
 			and in_array($j = 'jointure_' . table_objet($x['args']['objet_source']), $versionnes)
 		) {
-			$champs = array(
+			$champs = [
 				$j => recuperer_valeur_champ_jointure($x['args']['objet'], $id_objet, $x['args']['objet_source'])
-			);
+			];
 			ajouter_version($id_objet, $x['args']['objet'], $champs, '', session_get('id_auteur'));
 		}
 
@@ -331,12 +342,13 @@ function revisions_post_edition_lien($x) {
 		if (isset($GLOBALS['premiere_revision']["$table:" . $id_objet])) {
 			$GLOBALS['premiere_revision']["$table:" . $id_objet] = 0;
 		} // ex : si le champ jointure_articles est versionnable sur les mots
-		elseif ($versionnes = liste_champs_versionnes($table)
+		elseif (
+			$versionnes = liste_champs_versionnes($table)
 			and in_array($j = 'jointure_' . table_objet($x['args']['objet']), $versionnes)
 		) {
-			$champs = array(
+			$champs = [
 				$j => recuperer_valeur_champ_jointure($x['args']['objet_source'], $id_objet, $x['args']['objet'])
-			);
+			];
 			ajouter_version($id_objet, $x['args']['objet_source'], $champs, '', session_get('id_auteur'));
 		}
 	}

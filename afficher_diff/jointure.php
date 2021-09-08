@@ -33,7 +33,7 @@ function afficher_diff_jointure_dist($champ, $old, $new, $format = 'diff') {
 	$old = explode(',', $old);
 	$new = explode(',', $new);
 
-	$liste = array();
+	$liste = [];
 
 	// les communs
 	$intersection = array_intersect($new, $old);
