@@ -36,7 +36,7 @@ function separer_paras($texte, $paras = []) {
 		$paras = [];
 	}
 	while (preg_match("/(\r\n?){2,}|\n{2,}/", $texte, $regs)) {
-		$p = strpos($texte, $regs[0]) + strlen($regs[0]);
+		$p = strpos($texte, (string) $regs[0]) + strlen($regs[0]);
 		$paras[] = substr($texte, 0, $p);
 		$texte = substr($texte, $p);
 	}
@@ -91,7 +91,7 @@ function envoi_replace_fragments($replaces) {
 
 // https://code.spip.net/@envoi_delete_fragments
 function envoi_delete_fragments($id_objet, $objet, $deletes) {
-	if (count($deletes)) {
+	if (is_countable($deletes) ? count($deletes) : 0) {
 		sql_delete(
 			'spip_versions_fragments',
 			'id_objet=' . intval($id_objet) . ' AND objet=' . sql_quote($objet) . ' AND ((' . join(
@@ -167,6 +167,8 @@ function ajouter_fragments($id_objet, $objet, $id_version, $fragments) {
 //
 // https://code.spip.net/@supprimer_fragments
 function supprimer_fragments($id_objet, $objet, $version_debut, $version_fin) {
+	$deb_version_min = [];
+	$deb_version_max = [];
 	global $agregation_versions;
 
 	$replaces = [];
@@ -273,7 +275,7 @@ function supprimer_fragments($id_objet, $objet, $version_debut, $version_fin) {
 		// Essayer l'agregation
 		$agreger = false;
 		if (isset($deb_fragment[$id_fragment])) {
-			$agreger = (count($deb_fragment[$id_fragment]) + count($fragment) <= $agregation_versions);
+			$agreger = ((is_countable($deb_fragment[$id_fragment]) ? count($deb_fragment[$id_fragment]) : 0) + (is_countable($fragment) ? count($fragment) : 0) <= $agregation_versions);
 			if ($agreger) {
 				$fragment = $deb_fragment[$id_fragment] + $fragment;
 				$version_min = $deb_version_min[$id_fragment];
@@ -545,9 +547,7 @@ function reconstuire_version($champs, $fragments, $res = []) {
 		if (!isset($res[$nom])) {
 			$t = '';
 			foreach (array_filter(explode(' ', $code)) as $id) {
-				$t .= isset($fragments[$id])
-					? $fragments[$id]
-					: "[$msg$id]";
+				$t .= $fragments[$id] ?? "[$msg$id]";
 			}
 			$res[$nom] = $t;
 		}
@@ -585,7 +585,7 @@ function ajouter_version($id_objet, $objet, $champs, $titre_version = '', $id_au
 
 	// Attention a une edition anonyme (type wiki): id_auteur n'est pas
 	// definie, on enregistre alors le numero IP
-	$str_auteur = intval($id_auteur) ? intval($id_auteur) : $GLOBALS['ip'];
+	$str_auteur = intval($id_auteur) ?: $GLOBALS['ip'];
 
 	// si pas de titre dans cette version, la marquer 'non' permanente,
 	// et elle pourra etre fusionnee avec une revision ulterieure dans un delai < _INTERVALLE_REVISIONS
@@ -603,10 +603,10 @@ function ajouter_version($id_objet, $objet, $champs, $titre_version = '', $id_au
 	// Signaler qu'on opere en mettant un numero de version negatif
 	// distinctif (pour eviter la violation d'unicite)
 	// et un titre contenant en fait le moment de l'insertion
-	list($ms, $sec) = explode(' ', microtime());
+	[$ms, $sec] = explode(' ', microtime());
 	// SQL ne ramene que 4 chiffres significatifs apres la virgule pour 0.0+titre_version
 	$date = ($sec . substr($ms, 1, 4)) - 20;
-	$datediff = ($sec - mktime(0, 0, 0, 9, 1, 2007)) * 1000000 + substr($ms, 2, strlen($ms) - 4);
+	$datediff = ($sec - mktime(0, 0, 0, 9, 1, 2007)) * 1_000_000 + substr($ms, 2, strlen($ms) - 4);
 
 	$valeurs = [
 		'id_objet' => $id_objet,
@@ -705,7 +705,7 @@ function ajouter_version($id_objet, $objet, $champs, $titre_version = '', $id_au
 	$n = count($paras);
 	if ($n) {
 		// Tables d'appariement dans les deux sens
-		list(, $trans) = apparier_paras($paras_old, $paras);
+		[, $trans] = apparier_paras($paras_old, $paras);
 		reset($champs);
 		$nom = '';
 
@@ -719,7 +719,7 @@ function ajouter_version($id_objet, $objet, $champs, $titre_version = '', $id_au
 				next($champs);
 			}
 			// Lier au fragment existant si possible, sinon creer un nouveau fragment
-			$id_fragment = isset($trans[$i]) ? $trans[$i] : $next++;
+			$id_fragment = $trans[$i] ?? $next++;
 			$codes[$nom][] = $id_fragment;
 			$fragments[$id_fragment] = $paras[$i];
 		}

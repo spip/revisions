@@ -38,7 +38,7 @@ function test_objet_versionable($desc) {
 	if (
 		!$desc['editable']
 		or !isset($desc['champs_versionnes'])
-		or !count($desc['champs_versionnes'])
+		or !(is_countable($desc['champs_versionnes']) ? count($desc['champs_versionnes']) : 0)
 	) {
 		return '';
 	}

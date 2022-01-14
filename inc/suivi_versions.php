@@ -122,6 +122,7 @@ function retrouver_champ_version_objet($objet, $id_objet, $id_version, $champ, &
  *     Couples (champ => texte)
  */
 function revision_comparee($id_objet, $objet, $id_version, $format = 'diff', $id_diff = null) {
+	$textes = [];
 	include_spip('inc/diff');
 
 	// chercher le numero de la version precedente

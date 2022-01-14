@@ -125,7 +125,7 @@ function lcs($s, $t) {
 		$path = explode(' ', $paths[$max_len]);
 		$u = $v = [];
 		foreach ($path as $p) {
-			list($x, $y) = explode(',', $p);
+			[$x, $y] = explode(',', $p);
 			$u[$x] = $y;
 			$v[$y] = $x;
 		}
@@ -162,14 +162,15 @@ class Diff {
 
 // https://code.spip.net/@comparer
 	public function comparer($new, $old) {
+		$p_old = null;
 		$paras = $this->diff->segmenter($new);
 		$paras_old = $this->diff->segmenter($old);
 		if ($this->diff->fuzzy()) {
-			list($trans_rev, $trans) = apparier_paras($paras_old, $paras);
+			[$trans_rev, $trans] = apparier_paras($paras_old, $paras);
 			$lcs = lcs_opt($trans);
 			$lcs_rev = array_flip($lcs);
 		} else {
-			list($trans_rev, $trans) = lcs($paras_old, $paras);
+			[$trans_rev, $trans] = lcs($paras_old, $paras);
 			$lcs = $trans;
 			$lcs_rev = $trans_rev;
 		}
@@ -347,7 +348,7 @@ class DiffPara {
 		$paras = [];
 		$texte = trim($texte);
 		while (preg_match('/[\.!\?\]]+\s*/u', $texte, $regs)) {
-			$p = strpos($texte, $regs[0]) + strlen($regs[0]);
+			$p = strpos($texte, (string) $regs[0]) + strlen($regs[0]);
 			$paras[] = substr($texte, 0, $p);
 			$texte = substr($texte, $p);
 		}
@@ -418,9 +419,9 @@ class DiffPhrase {
 		}
 		$preg = '/(' . $punct . '+)(\s+|$)|(\s+)(' . $punct . '*)/' . $mode;
 		while (preg_match($preg, $texte, $regs)) {
-			$p = strpos($texte, $regs[0]);
+			$p = strpos($texte, (string) $regs[0]);
 			$l = strlen($regs[0]);
-			$punct = $regs[1] ? $regs[1] : $regs[6];
+			$punct = $regs[1] ?: $regs[6];
 			$milieu = '';
 			if ($punct) {
 				// notes
@@ -434,7 +435,7 @@ class DiffPhrase {
 					} // Attacher les raccourcis fermants au mot precedent
 					else {
 						if (preg_match(',^[\]}]+$,', $punct)) {
-							$avant = substr($texte, 0, $p) . (isset($regs[5]) ? $regs[5] : '') . $punct;
+							$avant = substr($texte, 0, $p) . ($regs[5] ?? '') . $punct;
 							$texte = $regs[4] . substr($texte, $p + $l);
 						} // Attacher les raccourcis ouvrants au mot suivant
 						else {

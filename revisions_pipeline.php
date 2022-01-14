@@ -187,7 +187,7 @@ function revisions_pre_edition($x) {
 			$GLOBALS['premiere_revision']["$table:" . $x['args']['id_objet']] = 0;
 		} // sinon creer une premiere revision qui date et dont on ne connait pas l'auteur
 		elseif ($versionnes = liste_champs_versionnes($table)) {
-			$objet = isset($x['args']['type']) ? $x['args']['type'] : objet_type($table);
+			$objet = $x['args']['type'] ?? objet_type($table);
 			verifier_premiere_revision($table, $objet, $x['args']['id_objet'], $versionnes, -1);
 		}
 	}
@@ -258,7 +258,7 @@ function revisions_post_edition($x) {
 		// Regarder si au moins une des modifs est versionnable
 		$champs = [];
 		$table = $x['args']['table'];
-		$objet = isset($x['args']['type']) ? $x['args']['type'] : objet_type($table);
+		$objet = $x['args']['type'] ?? objet_type($table);
 		include_spip('inc/session');
 
 		if (isset($GLOBALS['premiere_revision']["$table:" . $x['args']['id_objet']])) {

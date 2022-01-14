@@ -79,7 +79,7 @@ function formulaires_reviser_charger_dist($objet, $id_objet, $id_version, $id_di
 	}
 
 	$last_version = trouver_version_inf($objet, $id_objet);
-	list($id_version, $id_diff) = check_version_diff($objet, $id_objet, $id_version, $id_diff, $last_version);
+	[$id_version, $id_diff] = check_version_diff($objet, $id_objet, $id_version, $id_diff, $last_version);
 	if (!$id_version) {
 		return false;
 	}
@@ -97,7 +97,7 @@ function formulaires_reviser_charger_dist($objet, $id_objet, $id_version, $id_di
 
 function formulaires_reviser_verifier_dist($objet, $id_objet, $id_version, $id_diff) {
 	$erreurs = [];
-	list($id_version, $id_diff) = check_version_diff($objet, $id_objet, _request('id_version'), _request('id_diff'));
+	[$id_version, $id_diff] = check_version_diff($objet, $id_objet, _request('id_version'), _request('id_diff'));
 	set_request('id_version', $id_version);
 	set_request('id_diff', $id_diff);
 
