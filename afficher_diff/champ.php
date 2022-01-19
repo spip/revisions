@@ -50,7 +50,6 @@ function afficher_diff_champ_dist($champ, $old, $new, $format = 'diff') {
 
 
 /**
- * https://code.spip.net/@afficher_para_modifies
  *
  * @param string $texte
  * @param bool $court

@@ -160,7 +160,6 @@ class Diff {
 		$this->fuzzy = true;
 	}
 
-// https://code.spip.net/@comparer
 	public function comparer($new, $old) {
 		$p_old = null;
 		$paras = $this->diff->segmenter($new);
@@ -265,14 +264,12 @@ class DiffTexte {
 		$this->r = '';
 	}
 
-// https://code.spip.net/@_diff
 	public function _diff($p, $p_old) {
 		$diff = new Diff(new DiffPara());
 
 		return $diff->comparer($p, $p_old);
 	}
 
-// https://code.spip.net/@fuzzy
 	public function fuzzy() {
 		return true;
 	}
@@ -288,31 +285,26 @@ class DiffTexte {
 	}
 
 	// NB :  rem=\"diff-\" est un signal pour la fonction "afficher_para_modifies"
-// https://code.spip.net/@ajouter
 	public function ajouter($p) {
 		$p = trim($p);
 		$this->r .= "\n\n\n<span class=\"diff-para-ajoute\" title=\"" . _T('revisions:diff_para_ajoute') . '">' . $p . '</span rem="diff-">';
 	}
 
-// https://code.spip.net/@supprimer
 	public function supprimer($p_old) {
 		$p_old = trim($p_old);
 		$this->r .= "\n\n\n<span class=\"diff-para-supprime\" title=\"" . _T('revisions:diff_para_supprime') . '">' . $p_old . '</span rem="diff-">';
 	}
 
-// https://code.spip.net/@deplacer
 	public function deplacer($p, $p_old) {
 		$this->r .= "\n\n\n<span class=\"diff-para-deplace\" title=\"" . _T('revisions:diff_para_deplace') . '">';
 		$this->r .= trim($this->_diff($p, $p_old));
 		$this->r .= '</span rem="diff-">';
 	}
 
-// https://code.spip.net/@comparer
 	public function comparer($p, $p_old) {
 		$this->r .= "\n\n\n" . $this->_diff($p, $p_old);
 	}
 
-// https://code.spip.net/@resultat
 	public function resultat() {
 		return $this->r;
 	}
@@ -331,19 +323,16 @@ class DiffPara {
 		$this->r = '';
 	}
 
-// https://code.spip.net/@_diff
 	public function _diff($p, $p_old) {
 		$diff = new Diff(new DiffPhrase());
 
 		return $diff->comparer($p, $p_old);
 	}
 
-// https://code.spip.net/@fuzzy
 	public function fuzzy() {
 		return true;
 	}
 
-// https://code.spip.net/@segmenter
 	public function segmenter($texte) {
 		$paras = [];
 		$texte = trim($texte);
@@ -359,17 +348,14 @@ class DiffPara {
 		return $paras;
 	}
 
-// https://code.spip.net/@ajouter
 	public function ajouter($p) {
 		$this->r .= '<span class="diff-ajoute" title="' . _T('revisions:diff_texte_ajoute') . '">' . $p . '</span rem="diff-">';
 	}
 
-// https://code.spip.net/@supprimer
 	public function supprimer($p_old) {
 		$this->r .= '<span class="diff-supprime" title="' . _T('revisions:diff_texte_supprime') . '">' . $p_old . '</span rem="diff-">';
 	}
 
-// https://code.spip.net/@deplacer
 	public function deplacer($p, $p_old) {
 		$this->r .= '<span class="diff-deplace" title="' . _T('revisions:diff_texte_deplace') . '">' . $this->_diff(
 			$p,
@@ -377,12 +363,10 @@ class DiffPara {
 		) . '</span rem="diff-">';
 	}
 
-// https://code.spip.net/@comparer
 	public function comparer($p, $p_old) {
 		$this->r .= $this->_diff($p, $p_old);
 	}
 
-// https://code.spip.net/@resultat
 	public function resultat() {
 		return $this->r;
 	}
@@ -401,12 +385,10 @@ class DiffPhrase {
 		$this->r = '';
 	}
 
-// https://code.spip.net/@fuzzy
 	public function fuzzy() {
 		return false;
 	}
 
-// https://code.spip.net/@segmenter
 	public function segmenter($texte) {
 		$paras = [];
 		if (test_pcre_unicode()) {
@@ -469,29 +451,24 @@ class DiffPhrase {
 		return $paras;
 	}
 
-// https://code.spip.net/@ajouter
 	public function ajouter($p) {
 		$this->r .= '<span class="diff-ajoute" title="' . _T('revisions:diff_texte_ajoute') . '">' . $p . '</span rem="diff-"> ';
 	}
 
-// https://code.spip.net/@supprimer
 	public function supprimer($p_old) {
 		$this->r .= '<span class="diff-supprime" title="' . _T('revisions:diff_texte_supprime') . '">' . $p_old . '</span rem="diff-"> ';
 	}
 
-// https://code.spip.net/@comparer
 	public function comparer($p, $p_old) {
 		$this->r .= $p;
 	}
 
-// https://code.spip.net/@resultat
 	public function resultat() {
 		return $this->r;
 	}
 }
 
 
-// https://code.spip.net/@preparer_diff
 function preparer_diff($texte) {
 	include_spip('inc/charsets');
 
@@ -503,7 +480,6 @@ function preparer_diff($texte) {
 	return unicode_to_utf_8(html2unicode(charset2unicode($texte, $charset, true)));
 }
 
-// https://code.spip.net/@afficher_diff
 function afficher_diff($texte) {
 	$charset = $GLOBALS['meta']['charset'];
 	if ($charset == 'utf-8') {
