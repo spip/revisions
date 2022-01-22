@@ -39,8 +39,8 @@ function afficher_diff_jointure_dist($champ, $old, $new, $format = 'diff') {
 	$intersection = array_intersect($new, $old);
 	foreach ($intersection as $id) {
 		if ($id = intval(trim($id))) {
-			$liste[$id] = "<a href='" . generer_url_entite($id, $objet) . "' title='" . _T(objet_info($objet, 'texte_objet')) . " $id'>"
-				. generer_info_entite($id, $objet, 'titre')
+			$liste[$id] = "<a href='" . generer_objet_url($id, $objet) . "' title='" . _T(objet_info($objet, 'texte_objet')) . " $id'>"
+				. generer_objet_info($id, $objet, 'titre')
 				. '</a>';
 		}
 	}
@@ -50,8 +50,8 @@ function afficher_diff_jointure_dist($champ, $old, $new, $format = 'diff') {
 	foreach ($old as $id) {
 		if ($id = intval(trim($id))) {
 			$liste[$id] = "<span class='diff-supprime'>"
-				. "<a href='" . generer_url_entite($id, $objet) . "' title='" . _T(objet_info($objet, 'texte_objet')) . " $id'>"
-				. generer_info_entite($id, $objet, 'titre')
+				. "<a href='" . generer_objet_url($id, $objet) . "' title='" . _T(objet_info($objet, 'texte_objet')) . " $id'>"
+				. generer_objet_info($id, $objet, 'titre')
 				. '</a>'
 				. '</span>';
 		}
@@ -62,8 +62,8 @@ function afficher_diff_jointure_dist($champ, $old, $new, $format = 'diff') {
 	foreach ($new as $id) {
 		if ($id = intval(trim($id))) {
 			$liste[$id] = "<span class='diff-ajoute'>"
-				. "<a href='" . generer_url_entite($id, $objet) . "' title='" . _T(objet_info($objet, 'texte_objet')) . " $id'>"
-				. generer_info_entite($id, $objet, 'titre')
+				. "<a href='" . generer_objet_url($id, $objet) . "' title='" . _T(objet_info($objet, 'texte_objet')) . " $id'>"
+				. generer_objet_info($id, $objet, 'titre')
 				. '</a>'
 				. '</span>';
 		}

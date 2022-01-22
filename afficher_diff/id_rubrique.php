@@ -31,13 +31,13 @@ function afficher_diff_id_rubrique_dist($champ, $old, $new, $format = 'diff') {
 	// ne pas se compliquer la vie !
 	if ($old == $new) {
 		$out = _T('info_dans_rubrique')
-			. ' <b>&#171;&nbsp;' . generer_info_entite($new, 'rubrique', 'titre') . '&nbsp;&#187;</b>';
+			. ' <b>&#171;&nbsp;' . generer_objet_info($new, 'rubrique', 'titre') . '&nbsp;&#187;</b>';
 	} else {
 		$out = _T(
 			'revisions:version_deplace_rubrique',
 			[
-				'from' => generer_info_entite($old, 'rubrique', 'titre'),
-				'to' => generer_info_entite($new, 'rubrique', 'titre')
+				'from' => generer_objet_info($old, 'rubrique', 'titre'),
+				'to' => generer_objet_info($new, 'rubrique', 'titre')
 			]
 		);
 	}

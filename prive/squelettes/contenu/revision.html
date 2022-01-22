@@ -7,7 +7,7 @@
 [(#BOITE_OUVRIR{[
 
 	[(#ID_OBJET|oui)
-		[(#ID_OBJET|generer_url_entite{#OBJET}
+		[(#ID_OBJET|generer_objet_url{#OBJET}
 			|icone_verticale{[(#OBJET|objet_info{texte_retour}|_T)],#OBJET|objet_info{icone_objet},'',left retour[(#ENV{retourajax,''}|oui)ajax preload]})]
 	]
 	
@@ -23,7 +23,7 @@
 	]
 	
 	<h1>[(#CHEMIN_IMAGE{diff-24.png}|balise_img{'',cadre-icone})]<:revisions:info_historique:> &laquo;&nbsp;<a
-					href="[(#ID_OBJET|generer_url_entite{#OBJET})]"
+					href="[(#ID_OBJET|generer_objet_url{#OBJET})]"
 					title="[(#OBJET|objet_info{texte_objet}|_T) ]#ID_OBJET"
 					>(#INFO_TITRE{#OBJET,#ID_OBJET})</a>&nbsp;&raquo;</h1>
 	<h2><:revisions:differences_versions{id_version=#GET{id_version},id_diff=#GET{id_diff}}:></h2>
