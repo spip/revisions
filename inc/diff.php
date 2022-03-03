@@ -401,6 +401,7 @@ class DiffPhrase {
 		}
 		$preg = '/(' . $punct . '+)(\s+|$)|(\s+)(' . $punct . '*)/' . $mode;
 		while (preg_match($preg, $texte, $regs)) {
+			$regs = array_pad($regs, 6, '');
 			$p = strpos($texte, (string) $regs[0]);
 			$l = strlen($regs[0]);
 			$punct = $regs[1] ?: $regs[6];
@@ -417,7 +418,7 @@ class DiffPhrase {
 					} // Attacher les raccourcis fermants au mot precedent
 					else {
 						if (preg_match(',^[\]}]+$,', $punct)) {
-							$avant = substr($texte, 0, $p) . ($regs[5] ?? '') . $punct;
+							$avant = substr($texte, 0, $p) . $regs[5] . $punct;
 							$texte = $regs[4] . substr($texte, $p + $l);
 						} // Attacher les raccourcis ouvrants au mot suivant
 						else {
