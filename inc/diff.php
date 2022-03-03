@@ -391,14 +391,11 @@ class DiffPhrase {
 
 	public function segmenter($texte) {
 		$paras = [];
-		if (test_pcre_unicode()) {
-			$punct = '([[:punct:]]|' . plage_punct_unicode() . ')';
-			$mode = 'u';
-		} else {
-			// Plages de poncutation pour preg_match bugge (ha ha)
-			$punct = '([^\w\s\x80-\xFF]|' . plage_punct_unicode() . ')';
-			$mode = '';
-		}
+
+		$plage_punct_unicode = '\xE2(\x80[\x80-\xBF]|\x81[\x80-\xAF])';
+		$punct = '([[:punct:]]|' . $plage_punct_unicode . ')';
+		$mode = 'u';
+
 		$preg = '/(' . $punct . '+)(\s+|$)|(\s+)(' . $punct . '*)/' . $mode;
 		while (preg_match($preg, $texte, $regs)) {
 			$regs = array_pad($regs, 6, '');
