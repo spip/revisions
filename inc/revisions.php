@@ -842,9 +842,10 @@ function propre_diff($texte) {
  *     Liste des champs versionnés
  */
 function liste_champs_versionnes($table) {
-	$liste_objets_versionnees = is_array(unserialize($GLOBALS['meta']['objets_versions'])) ? unserialize($GLOBALS['meta']['objets_versions']) : [];
+	include_spip('inc/config');
+	$liste_objets_versionnes = lire_config('objets_versions/', []);
 
-	if (!in_array($table, $liste_objets_versionnees)) {
+	if (!in_array($table, $liste_objets_versionnes)) {
 		return [];
 	}
 
