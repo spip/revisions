@@ -70,9 +70,8 @@ function check_version_diff($objet, $id_objet, $id_version, $id_diff, $last_vers
 }
 
 function formulaires_reviser_charger_dist($objet, $id_objet, $id_version, $id_diff) {
-	if (!$objets = unserialize($GLOBALS['meta']['objets_versions'])) {
-		$objets = [];
-	}
+	include_spip('inc/config');
+	$objets = lire_config('objets_versions/', []);
 
 	if (!in_array(table_objet_sql($objet), $objets)) {
 		return false;

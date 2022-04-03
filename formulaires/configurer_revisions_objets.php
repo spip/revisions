@@ -15,9 +15,9 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 }
 
 function formulaires_configurer_revisions_objets_charger_dist() {
-	if (!$objets = unserialize($GLOBALS['meta']['objets_versions'])) {
-		$objets = [];
-	}
+	include_spip('inc/config');
+	$objets = lire_config('objets_versions/', []);
+
 	$valeurs = [
 		'objets_versions' => $objets,
 	];
@@ -26,10 +26,8 @@ function formulaires_configurer_revisions_objets_charger_dist() {
 }
 
 function formulaires_configurer_revisions_objets_traiter_dist() {
-
-	include_spip('inc/meta');
-	$tables = serialize(_request('objets_versions'));
-	ecrire_meta('objets_versions', $tables);
+	include_spip('inc/config');
+	ecrire_config('objets_versions/', _request('objets_versions'));
 
 	return ['message_ok' => _T('config_info_enregistree')];
 }
