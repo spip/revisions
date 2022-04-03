@@ -31,7 +31,8 @@ function revisions_boite_infos($flux) {
 	$type = $flux['args']['type'];
 	if (
 		$id = intval($flux['args']['id'])
-		and $tables = unserialize($GLOBALS['meta']['objets_versions'])
+		and include_spip('inc/config')
+		and $tables = lire_config('objets_versions/', [])
 		and in_array(table_objet_sql($type), $tables)
 		and autoriser('voirrevisions', $type, $id)
 		// regarder le numero de revision le plus eleve, et afficher le bouton
@@ -62,7 +63,8 @@ function revisions_affiche_milieu($flux) {
 	// la bonne page et des objets révisables cochées !
 	if (
 		in_array($flux['args']['exec'], ['accueil', 'suivi_edito'])
-		and unserialize($GLOBALS['meta']['objets_versions'])
+		and include_spip('inc/config')
+		and lire_config('objets_versions/')
 	) {
 		$contexte = [];
 		if ($GLOBALS['visiteur_session']['statut'] !== '0minirezo') {
