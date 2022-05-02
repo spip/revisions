@@ -844,6 +844,7 @@ function propre_diff($texte) {
 function liste_champs_versionnes($table) {
 	include_spip('inc/config');
 	$liste_objets_versionnes = lire_config('objets_versions/', []);
+	$liste_objets_versionnes = (is_array($liste_objets_versionnes) ? $liste_objets_versionnes : []);
 
 	if (!in_array($table, $liste_objets_versionnes)) {
 		return [];
