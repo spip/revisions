@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
-### Fixed
+### Added
 
-- #4836 Éviter un warning à l’installation de SPIP
+- Fichier `README.md`
+
+### Changed
+
+- Compatible SPIP 4.2.0-dev
